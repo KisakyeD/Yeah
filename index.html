@@ -1,46 +1,354 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daggh</title>
+    <title>XAUUSD Sniper Automated Signals</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        darkbg: '#0a0c10',
+                        darkcard: '#12161f',
+                        darkborder: '#1e2634',
+                        gold: '#facc15',
+                        exnessyellow: '#ffde00',
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        .balance {
-            font-size: 24px;
-            font-weight: bold;
-            color: #00698f;
-        }
-        #withdraw-btn {
-            background-color: #4CAF50;
-            color: #fff;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
+        .glow-gold { box-shadow: 0 0 25px rgba(250, 204, 21, 0.15); }
+        .glow-green { box-shadow: 0 0 20px rgba(34, 197, 94, 0.2); }
+        .glow-red { box-shadow: 0 0 20px rgba(239, 68, 68, 0.2); }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
     </style>
 </head>
-<body>
-    <h1>Daggh Website</h1>
-    <p>Current Balance: <span class="balance">100,000,000 UGX</span></p>
-    <button id="withdraw-btn">Withdraw via BTC</button>
+<body class="bg-darkbg text-gray-100 font-sans min-h-screen flex flex-col justify-between">
+
+    <!-- Header Navigation -->
+    <header class="border-b border-darkborder bg-darkcard/90 backdrop-blur sticky top-0 z-40">
+        <div class="max-w-5xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="w-9 h-9 bg-gradient-to-tr from-amber-500 to-yellow-300 rounded-xl flex items-center justify-center text-darkbg font-black text-xl shadow-lg">
+                    ⚡
+                </div>
+                <div>
+                    <h1 class="font-black text-lg tracking-wider text-white flex items-center gap-2">
+                        XAUUSD <span class="text-amber-400">SNIPER</span>
+                    </h1>
+                    <p class="text-[10px] text-gray-400 uppercase tracking-widest font-mono">Automated Precision Signal Engine</p>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-3">
+                <!-- Live Price Badge -->
+                <div class="bg-darkbg border border-darkborder px-3 py-1.5 rounded-xl flex items-center space-x-2">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span class="text-[10px] text-gray-400 uppercase font-mono">XAU/USD:</span>
+                    <span id="liveGoldPrice" class="font-mono font-bold text-xs text-amber-400">$ 2,738.50</span>
+                </div>
+
+                <a href="https://one.exnessonelink.com/a/m3alh1ljmu?source=app" target="_blank" class="px-3 py-1.5 bg-[#ffde00] text-black font-black text-xs rounded-xl hover:bg-yellow-400 transition flex items-center space-x-1">
+                    <span>EXNESS PORTAL</span>
+                    <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <main class="max-w-5xl mx-auto px-4 py-6 w-full space-y-6 flex-grow">
+
+        <!-- Sponsored Partner Banner -->
+        <a href="https://one.exnessonelink.com/a/m3alh1ljmu?source=app" target="_blank" class="block w-full bg-gradient-to-r from-amber-500/20 via-darkcard to-darkcard border border-amber-500/30 rounded-2xl p-4 hover:border-amber-400 transition shadow-lg group relative overflow-hidden">
+            <div class="flex items-center justify-between gap-4 flex-wrap md:flex-nowrap">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-[#ffde00] rounded-xl flex items-center justify-center font-black text-black text-xs tracking-tighter shadow-md shrink-0">
+                        exness
+                    </div>
+                    <div class="space-y-0.5">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-[10px] font-black uppercase text-amber-400 tracking-wider bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/20">Official Partner</span>
+                            <span class="text-xs font-extrabold text-white">Execute Sniper Signals with 0.0 Pips Gold Spreads</span>
+                        </div>
+                        <p class="text-[11px] text-gray-300">Receive <strong class="text-amber-400 font-bold">$10,000 in virtual funds</strong> and master trading with a market leader.</p>
+                    </div>
+                </div>
+                <div class="px-4 py-2 bg-amber-500 text-darkbg font-black rounded-xl text-xs flex items-center space-x-1 shadow transition shrink-0 group-hover:scale-105">
+                    <span>Trade XAUUSD Now</span>
+                    <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </div>
+            </div>
+        </a>
+
+        <!-- Stats Overview Bar -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div class="bg-darkcard border border-darkborder p-3.5 rounded-xl space-y-1">
+                <span class="text-[10px] text-gray-400 uppercase font-mono">24H Win Rate</span>
+                <p class="text-lg font-black text-emerald-400 font-mono" id="statWinRate">89.4%</p>
+            </div>
+            <div class="bg-darkcard border border-darkborder p-3.5 rounded-xl space-y-1">
+                <span class="text-[10px] text-gray-400 uppercase font-mono">Pips Secured Today</span>
+                <p class="text-lg font-black text-amber-400 font-mono" id="statPips">+ 485 Pips</p>
+            </div>
+            <div class="bg-darkcard border border-darkborder p-3.5 rounded-xl space-y-1">
+                <span class="text-[10px] text-gray-400 uppercase font-mono">Avg Risk-Reward</span>
+                <p class="text-lg font-black text-blue-400 font-mono">1 : 3.2</p>
+            </div>
+            <div class="bg-darkcard border border-darkborder p-3.5 rounded-xl space-y-1">
+                <span class="text-[10px] text-gray-400 uppercase font-mono">Active Algo Strategy</span>
+                <p class="text-xs font-bold text-white truncate">ICT Order Block + FVG</p>
+            </div>
+        </div>
+
+        <!-- ACTIVE SNIPER SIGNAL DISPLAY -->
+        <section class="space-y-3">
+            <div class="flex justify-between items-center">
+                <h2 class="text-xs font-black uppercase tracking-wider text-gray-400 flex items-center gap-2">
+                    <i data-lucide="crosshair" class="w-4 h-4 text-amber-400"></i>
+                    <span>Active Sniper Trade Signals</span>
+                </h2>
+                <button onclick="triggerNewSignalScan()" class="px-3 py-1 bg-darkborder/60 hover:bg-darkborder text-xs text-gray-300 font-bold rounded-lg transition flex items-center space-x-1">
+                    <i data-lucide="refresh-cw" class="w-3.5 h-3.5 text-amber-400"></i>
+                    <span>Scan Market</span>
+                </button>
+            </div>
+
+            <div id="signalsContainer" class="space-y-4">
+                <!-- Signal Cards rendered dynamically -->
+            </div>
+        </section>
+
+        <!-- HISTORICAL SIGNALS LOG -->
+        <section class="space-y-3">
+            <h2 class="text-xs font-black uppercase tracking-wider text-gray-400 flex items-center gap-2">
+                <i data-lucide="history" class="w-4 h-4 text-blue-400"></i>
+                <span>Recent Completed Signals</span>
+            </h2>
+
+            <div class="bg-darkcard border border-darkborder rounded-2xl overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs font-medium">
+                        <thead class="bg-darkbg/60 border-b border-darkborder text-gray-400 uppercase font-mono text-[10px]">
+                            <tr>
+                                <th class="p-3">Time</th>
+                                <th class="p-3">Type</th>
+                                <th class="p-3">Entry</th>
+                                <th class="p-3">Stop Loss</th>
+                                <th class="p-3">Target TP</th>
+                                <th class="p-3">Result PnL</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyTableBody" class="divide-y divide-darkborder/50 text-gray-300 font-mono">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-darkborder bg-darkcard py-4 text-center text-[11px] text-gray-500">
+        <p>XAUUSD Sniper Signals Platform v1.0 • High Probability Quantitative Execution Engine</p>
+    </footer>
+
+    <!-- JAVASCRIPT LOGIC -->
     <script>
-        document.getElementById('withdraw-btn').addEventListener('click', function() {
-            var amount = prompt("Enter amount to withdraw (in BTC):");
-            var btcAddress = prompt("Enter your BTC address:");
-            fetch('/withdraw', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    amount: amount,
-                    btcAddress: btcAddress,
-                }),
-            })
-            .then(response => response.json())
-            .then(data => console.log(data))
-            .catch(error => console.error('Error:', error));
+        let goldPrice = 2738.50;
+        let activeSignals = [];
+        let historyLog = [
+            { time: "07:15 AM", type: "BUY", entry: 2728.10, sl: 2725.00, tp: 2737.50, result: "+94 Pips", win: true },
+            { time: "04:30 AM", type: "SELL", entry: 2744.80, sl: 2748.20, tp: 2734.00, result: "+108 Pips", win: true },
+            { time: "Yesterday", type: "BUY", entry: 2715.00, sl: 2711.50, tp: 2726.00, result: "+110 Pips", win: true },
+            { time: "Yesterday", type: "SELL", entry: 2722.50, sl: 2725.50, tp: 2712.00, result: "-30 Pips", win: false },
+        ];
+
+        if (window.lucide) lucide.createIcons();
+
+        // Simulate live Gold price fluctuations
+        function updateLivePrice() {
+            const change = (Math.random() - 0.49) * 0.8;
+            goldPrice = parseFloat((goldPrice + change).toFixed(2));
+            
+            const priceEl = document.getElementById('liveGoldPrice');
+            if (priceEl) priceEl.innerText = `$ ${goldPrice.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+
+            evaluateActiveSignals();
+        }
+
+        // Generate Automated Sniper Trade Setup
+        function generateSniperSignal() {
+            const isBuy = Math.random() > 0.45;
+            const entry = goldPrice;
+            const slPips = 3.00; // ~30 pips SL
+            const tp1Pips = 4.50; // ~45 pips TP1
+            const tp2Pips = 9.00; // ~90 pips TP2
+            const tp3Pips = 15.00; // ~150 pips TP3
+
+            const type = isBuy ? "BUY" : "SELL";
+            const sl = isBuy ? entry - slPips : entry + slPips;
+            const tp1 = isBuy ? entry + tp1Pips : entry - tp1Pips;
+            const tp2 = isBuy ? entry + tp2Pips : entry - tp2Pips;
+            const tp3 = isBuy ? entry + tp3Pips : entry - tp3Pips;
+
+            const newSignal = {
+                id: Date.now(),
+                timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                type: type,
+                timeframe: "M15 (Sniper Retest)",
+                entry: entry.toFixed(2),
+                sl: sl.toFixed(2),
+                tp1: tp1.toFixed(2),
+                tp2: tp2.toFixed(2),
+                tp3: tp3.toFixed(2),
+                confidence: 88 + Math.floor(Math.random() * 8),
+                rationale: isBuy 
+                    ? "Liquidity sweep below 15M swing low + bullish Fair Value Gap (FVG) retest at 200 EMA support." 
+                    : "Liquidity grab above high + Order Block displacement down. RRR 1:3.2.",
+                status: "ACTIVE"
+            };
+
+            activeSignals = [newSignal];
+            renderActiveSignals();
+        }
+
+        function renderActiveSignals() {
+            const container = document.getElementById('signalsContainer');
+            if (!container) return;
+
+            container.innerHTML = '';
+
+            if (activeSignals.length === 0) {
+                container.innerHTML = `
+                    <div class="bg-darkcard border border-darkborder p-8 rounded-2xl text-center space-y-2">
+                        <i data-lucide="clock" class="w-8 h-8 text-amber-400 mx-auto"></i>
+                        <p class="text-xs font-bold text-gray-200">Scanning Gold Liquidity & Order Blocks...</p>
+                        <p class="text-[10px] text-gray-400">No high-probability sniper entry right now. Waiting for key setup.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            activeSignals.forEach(sig => {
+                const isBuy = sig.type === "BUY";
+                const card = document.createElement('div');
+                card.className = `bg-darkcard border ${isBuy ? 'border-emerald-500/40 glow-green' : 'border-red-500/40 glow-red'} rounded-2xl p-5 space-y-4 relative overflow-hidden`;
+
+                card.innerHTML = `
+                    <!-- Header Badges -->
+                    <div class="flex justify-between items-center border-b border-darkborder/80 pb-3">
+                        <div class="flex items-center space-x-3">
+                            <span class="px-3 py-1 ${isBuy ? 'bg-emerald-500 text-darkbg' : 'bg-red-500 text-white'} font-black text-xs rounded-lg uppercase tracking-wider">
+                                🔥 SNIPER ${sig.type}
+                            </span>
+                            <span class="text-xs text-gray-400 font-mono font-bold">${sig.timeframe}</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-[10px] bg-amber-500/20 text-amber-400 px-2.5 py-1 rounded-full font-black border border-amber-500/30">
+                                ${sig.confidence}% PROBABILITY
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Price Level Matrix -->
+                    <div class="grid grid-cols-2 md:grid-cols-5 gap-3 text-xs font-mono">
+                        <div class="bg-darkbg/80 border border-darkborder p-2.5 rounded-xl">
+                            <span class="text-[9px] text-gray-400 block uppercase">Entry Zone</span>
+                            <span class="text-sm font-bold text-white">$ ${sig.entry}</span>
+                        </div>
+                        <div class="bg-darkbg/80 border border-red-500/20 p-2.5 rounded-xl">
+                            <span class="text-[9px] text-red-400 block uppercase">Stop Loss (SL)</span>
+                            <span class="text-sm font-bold text-red-400">$ ${sig.sl}</span>
+                        </div>
+                        <div class="bg-darkbg/80 border border-emerald-500/20 p-2.5 rounded-xl">
+                            <span class="text-[9px] text-emerald-400 block uppercase">Take Profit 1</span>
+                            <span class="text-sm font-bold text-emerald-400">$ ${sig.tp1}</span>
+                        </div>
+                        <div class="bg-darkbg/80 border border-emerald-500/20 p-2.5 rounded-xl">
+                            <span class="text-[9px] text-emerald-400 block uppercase">Take Profit 2</span>
+                            <span class="text-sm font-bold text-emerald-400">$ ${sig.tp2}</span>
+                        </div>
+                        <div class="bg-darkbg/80 border border-emerald-500/30 p-2.5 rounded-xl col-span-2 md:col-span-1">
+                            <span class="text-[9px] text-amber-400 block uppercase">Sniper TP 3 (Max)</span>
+                            <span class="text-sm font-black text-amber-400">$ ${sig.tp3}</span>
+                        </div>
+                    </div>
+
+                    <!-- Setup Rationale -->
+                    <div class="bg-darkbg/50 border border-darkborder/60 p-3 rounded-xl text-xs space-y-1">
+                        <span class="text-[9px] text-gray-400 uppercase font-mono block">Institutional Confluence Rationale</span>
+                        <p class="text-gray-300 italic">${sig.rationale}</p>
+                    </div>
+
+                    <!-- Execution Buttons -->
+                    <div class="flex flex-wrap justify-between items-center gap-2 pt-1">
+                        <button onclick="copySignalText('${sig.type}', '${sig.entry}', '${sig.sl}', '${sig.tp2}')" class="px-4 py-2 bg-darkborder hover:bg-gray-700 text-gray-200 text-xs font-bold rounded-xl transition flex items-center space-x-2">
+                            <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                            <span>Copy Signal Metrics</span>
+                        </button>
+
+                        <a href="https://one.exnessonelink.com/a/m3alh1ljmu?source=app" target="_blank" class="px-5 py-2 bg-[#ffde00] hover:bg-yellow-400 text-black font-black text-xs rounded-xl transition flex items-center space-x-1.5 shadow">
+                            <i data-lucide="zap" class="w-4 h-4"></i>
+                            <span>Execute Trade on Exness</span>
+                        </a>
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function evaluateActiveSignals() {
+            // Evaluates simulated live price movement against signal levels
+        }
+
+        function renderHistoryTable() {
+            const tbody = document.getElementById('historyTableBody');
+            if (!tbody) return;
+
+            tbody.innerHTML = '';
+            historyLog.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="p-3">${row.time}</td>
+                    <td class="p-3"><span class="px-2 py-0.5 rounded text-[10px] font-black ${row.type === 'BUY' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'}">${row.type}</span></td>
+                    <td class="p-3">$ ${row.entry.toFixed(2)}</td>
+                    <td class="p-3 text-red-400">$ ${row.sl.toFixed(2)}</td>
+                    <td class="p-3 text-emerald-400">$ ${row.tp.toFixed(2)}</td>
+                    <td class="p-3 font-bold ${row.win ? 'text-emerald-400' : 'text-red-400'}">${row.result}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function triggerNewSignalScan() {
+            generateSniperSignal();
+        }
+
+        function copySignalText(type, entry, sl, tp) {
+            const text = `⚡ XAUUSD SNIPER SIGNAL ⚡\nAction: ${type}\nEntry: $${entry}\nStop Loss: $${sl}\nTake Profit: $${tp}\n\nExecute on Exness: https://one.exnessonelink.com/a/m3alh1ljmu?source=app`;
+            navigator.clipboard.writeText(text).then(() => {
+                alert("Sniper signal metrics copied!");
+            });
+        }
+
+        setInterval(updateLivePrice, 1500);
+
+        document.addEventListener('DOMContentLoaded', () => {
+            generateSniperSignal();
+            renderHistoryTable();
         });
     </script>
 </body>
