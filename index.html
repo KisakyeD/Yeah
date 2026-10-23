@@ -81,7 +81,7 @@
                 <i data-lucide="external-link" class="w-4 h-4"></i>
                 <span>Open Exness Partner Portal</span>
             </a>
-            <p class="text-[10px] text-gray-500 text-center font-mono">XAUUSD Lightning v3.5</p>
+            <p class="text-[10px] text-gray-500 text-center font-mono">XAUUSD Lightning v3.6</p>
         </div>
     </aside>
 
@@ -342,7 +342,7 @@
 
     <!-- Footer -->
     <footer class="border-t border-darkborder bg-darkcard py-4 text-center text-[11px] text-gray-500">
-        <p>XAUUSD Live Sniper Signals Platform v3.5 • Lightning-Fast SMC + Order Flow Engine</p>
+        <p>XAUUSD Live Sniper Signals Platform v3.6 • Lightning-Fast SMC + Order Flow Engine</p>
     </footer>
 
     <!-- JAVASCRIPT ENGINE -->
@@ -352,7 +352,6 @@
         let priceHistory = [];
         let historyLog = [];
 
-        // User Settings State
         let userSettings = {
             minProb: 90,
             soundAlerts: true,
@@ -362,7 +361,6 @@
 
         if (window.lucide) lucide.createIcons();
 
-        // 1. Drawer Navigation
         function toggleDrawer() {
             const drawer = document.getElementById('navDrawer');
             const backdrop = document.getElementById('drawerBackdrop');
@@ -404,7 +402,6 @@
             showToast("Settings & Alert preferences updated successfully!", "success");
         }
 
-        // 2. Toast Notification & Audio Alert System
         function showToast(message, type = "info") {
             if (!userSettings.pushNotifs) return;
             const container = document.getElementById('toastContainer');
@@ -432,19 +429,16 @@
                 const osc = audioCtx.createOscillator();
                 const gain = audioCtx.createGain();
                 osc.type = 'sine';
-                osc.frequency.setValueAtTime(880, audioCtx.currentTime); // A5 note
+                osc.frequency.setValueAtTime(880, audioCtx.currentTime);
                 gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
                 gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
                 osc.connect(gain);
                 gain.connect(audioCtx.destination);
                 osc.start();
                 osc.stop(audioCtx.currentTime + 0.4);
-            } catch (e) {
-                // Audio context policy fallback
-            }
+            } catch (e) {}
         }
 
-        // 3. TradingView Widget
         function initTradingViewChart() {
             if (typeof TradingView !== 'undefined') {
                 new TradingView.widget({
@@ -463,15 +457,24 @@
             }
         }
 
-        // 4. Lightning-Fast Local Stream & Non-Blocking API Sync
+        function loadSavedSignal() {
+            const saved = localStorage.getItem('activeSniperSignal');
+            if (saved) {
+                try {
+                    activeSignal = JSON.parse(saved);
+                    renderActiveSignalCard();
+                } catch (e) {
+                    console.warn("Could not load saved signal");
+                }
+            }
+        }
+
         function initPriceStream() {
-            // Instant local micro-tick updates every 600ms for zero lag
             setInterval(() => {
                 const drift = (Math.random() - 0.49) * 0.45;
                 updatePriceDisplay(livePrice + drift);
             }, 600);
 
-            // Background async API fetch every 5s to sync real-time market drift
             setInterval(async () => {
                 try {
                     const res = await fetch('https://api.gold-api.com/price/XAU');
@@ -498,7 +501,6 @@
             evaluateSniperEngine();
         }
 
-        // 5. High-Confluence AI Engine
         function evaluateSniperEngine() {
             if (!activeSignal) {
                 evaluateAndTriggerHighProbabilitySignal();
@@ -518,9 +520,11 @@
                     closeSignalOutcome(true, "TP3 Hit (+150 Pips)");
                 } else if (livePrice >= tp2 && !activeSignal.tp2Hit) {
                     activeSignal.tp2Hit = true;
+                    saveActiveSignal();
                     renderActiveSignalCard();
                 } else if (livePrice >= tp1 && !activeSignal.tp1Hit) {
                     activeSignal.tp1Hit = true;
+                    saveActiveSignal();
                     renderActiveSignalCard();
                 }
             } else {
@@ -530,12 +534,18 @@
                     closeSignalOutcome(true, "TP3 Hit (+150 Pips)");
                 } else if (livePrice <= tp2 && !activeSignal.tp2Hit) {
                     activeSignal.tp2Hit = true;
+                    saveActiveSignal();
                     renderActiveSignalCard();
                 } else if (livePrice <= tp1 && !activeSignal.tp1Hit) {
                     activeSignal.tp1Hit = true;
+                    saveActiveSignal();
                     renderActiveSignalCard();
                 }
             }
+        }
+
+        function saveActiveSignal() {
+            localStorage.setItem('activeSniperSignal', JSON.stringify(activeSignal));
         }
 
         function evaluateAndTriggerHighProbabilitySignal() {
@@ -577,9 +587,8 @@
                     : "SMC High Liquidity Grab + Cumulative Delta (CVD -420) aggressive selling pressure + Footprint diagonal imbalance."
             };
 
+            saveActiveSignal();
             renderActiveSignalCard();
-            
-            // Trigger Alerts
             playSoundChime();
             showToast(`🔥 New High-Probability Sniper ${type} Signal at $${entry} (${confidence}% Conf.)!`, "success");
         }
@@ -660,12 +669,13 @@
                 win: win,
                 rationale: activeSignal.rationale
             });
+
+            localStorage.removeItem('activeSniperSignal');
             activeSignal = null;
             renderHistoryTable();
             evaluateAndTriggerHighProbabilitySignal();
         }
 
-        // 6. 30-Day History & Calendar
         function initHistoryDatePicker() {
             const picker = document.getElementById('historyDatePicker');
             const today = new Date().toISOString().split('T')[0];
@@ -742,7 +752,6 @@
             });
         }
 
-        // 7. Risk Calculator & Utilities
         function calculateLotSize() {
             const equity = parseFloat(document.getElementById('calcEquity').value) || 1000;
             const riskPct = parseFloat(document.getElementById('calcRiskPct').value) || 2;
@@ -765,6 +774,7 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             initTradingViewChart();
+            loadSavedSignal(); // Loads saved signal state on reload
             initPriceStream();
             calculateLotSize();
             populateHistoricalData();
