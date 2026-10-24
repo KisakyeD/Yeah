@@ -1,784 +1,608 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XAUUSD Live Automated Sniper Signals</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        darkbg: '#0a0c10',
-                        darkcard: '#12161f',
-                        darkborder: '#1e2634',
-                        gold: '#facc15',
-                        exnessyellow: '#ffde00',
-                    }
-                }
-            }
-        }
-    </script>
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- TradingView Embed Widget -->
-    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+    <title>VIP AI Football Predictions & Odd 400+ Tickets</title>
     <style>
-        .glow-gold { box-shadow: 0 0 25px rgba(250, 204, 21, 0.15); }
-        .glow-green { box-shadow: 0 0 20px rgba(34, 197, 94, 0.2); }
-        .glow-red { box-shadow: 0 0 20px rgba(239, 68, 68, 0.2); }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        @keyframes slideIn { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        .animate-slide-in { animation: slideIn 0.3s ease-out forwards; }
+        :root {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-card: #1e293b;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent: #38bdf8;
+            --accent-glow: rgba(56, 189, 248, 0.2);
+            --vip-gold: #f59e0b;
+            --btts-green: #10b981;
+            --border: #334155;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+        }
+
+        [data-theme="light"] {
+            --bg-primary: #f1f5f9;
+            --bg-secondary: #ffffff;
+            --bg-card: #ffffff;
+            --text-primary: #0f172a;
+            --text-secondary: #64748b;
+            --accent: #0284c7;
+            --accent-glow: rgba(2, 132, 199, 0.15);
+            --vip-gold: #d97706;
+            --btts-green: #059669;
+            --border: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Top Header */
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 20px;
+            background-color: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .hamburger-btn {
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 24px;
+            cursor: pointer;
+            padding: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            background: linear-gradient(45deg, var(--vip-gold), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .theme-toggle-btn {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            padding: 6px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        /* Hamburger Drawer Menu */
+        .drawer {
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 280px;
+            height: 100%;
+            background-color: var(--bg-secondary);
+            border-right: 1px solid var(--border);
+            z-index: 1000;
+            transition: left 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            box-shadow: 10px 0 25px rgba(0,0,0,0.5);
+        }
+
+        .drawer.open {
+            left: 0;
+        }
+
+        .drawer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .drawer-close {
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 22px;
+            cursor: pointer;
+        }
+
+        .drawer-menu-items {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .drawer-menu-items li a, .drawer-menu-items label {
+            color: var(--text-primary);
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .drawer-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 900;
+            display: none;
+        }
+
+        .drawer-overlay.active {
+            display: block;
+        }
+
+        /* Calendar Navigation Bar (-30 to +30 Days) */
+        .calendar-nav-container {
+            background-color: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            padding: 10px 0;
+            overflow-x: auto;
+            white-space: nowrap;
+            scrollbar-width: thin;
+        }
+
+        .calendar-strip {
+            display: inline-flex;
+            gap: 8px;
+            padding: 0 15px;
+        }
+
+        .cal-day-btn {
+            background-color: var(--bg-primary);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            padding: 8px 14px;
+            border-radius: 12px;
+            cursor: pointer;
+            text-align: center;
+            min-width: 70px;
+        }
+
+        .cal-day-btn .day-name {
+            font-size: 11px;
+            text-transform: uppercase;
+        }
+
+        .cal-day-btn .day-date {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .cal-day-btn.active {
+            background-color: var(--accent);
+            border-color: var(--accent);
+            color: #ffffff;
+        }
+
+        .cal-day-btn.active .day-date, .cal-day-btn.active .day-name {
+            color: #ffffff;
+        }
+
+        /* Main Content Layout */
+        main {
+            flex: 1;
+            padding: 20px;
+            max-width: 900px;
+            width: 100%;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Section Tabs */
+        .section-tabs {
+            display: flex;
+            gap: 10px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 10px;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            padding: 8px 16px;
+            border-radius: 8px;
+        }
+
+        .tab-btn.active {
+            background-color: var(--accent-glow);
+            color: var(--accent);
+        }
+
+        .tab-content {
+            display: none;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .tab-content.active {
+            display: flex;
+        }
+
+        /* Ticket & Match Cards */
+        .card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 18px;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .vip-ticket-card {
+            border: 2px solid var(--vip-gold);
+            background: linear-gradient(135deg, var(--bg-card) 0%, rgba(245, 158, 11, 0.05) 100%);
+        }
+
+        .badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            font-size: 11px;
+            font-weight: 800;
+            padding: 4px 10px;
+            border-radius: 6px;
+            text-transform: uppercase;
+        }
+
+        .badge-vip {
+            background-color: var(--vip-gold);
+            color: #000;
+        }
+
+        .badge-btts {
+            background-color: var(--btts-green);
+            color: #fff;
+        }
+
+        .card-header {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .match-teams {
+            font-size: 18px;
+            font-weight: 800;
+            margin-bottom: 12px;
+        }
+
+        .ticket-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 15px 0;
+            background: var(--bg-primary);
+            padding: 12px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-item .label {
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        .stat-item .value {
+            font-size: 15px;
+            font-weight: 800;
+            color: var(--accent);
+        }
+
+        .ai-analysis-box {
+            background-color: var(--bg-primary);
+            border-left: 4px solid var(--accent);
+            padding: 12px;
+            border-radius: 0 8px 8px 0;
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-top: 10px;
+            line-height: 1.4;
+        }
+
+        .ai-analysis-box strong {
+            color: var(--text-primary);
+        }
+
+        footer {
+            text-align: center;
+            padding: 15px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            border-top: 1px solid var(--border);
+            margin-top: auto;
+        }
     </style>
 </head>
-<body class="bg-darkbg text-gray-100 font-sans min-h-screen flex flex-col justify-between" id="bodyEl">
+<body>
 
-    <!-- Toast Notification Container -->
-    <div id="toastContainer" class="fixed top-20 right-4 z-50 space-y-2 pointer-events-none"></div>
-
-    <!-- Slide-over Navigation Drawer Backdrop -->
-    <div id="drawerBackdrop" onclick="toggleDrawer()" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden transition-opacity"></div>
-
-    <!-- Navigation Drawer -->
-    <aside id="navDrawer" class="fixed top-0 left-0 bottom-0 w-80 bg-darkcard border-r border-darkborder z-50 transform -translate-x-full transition-transform duration-300 flex flex-col justify-between p-5">
-        <div class="space-y-6">
-            <div class="flex items-center justify-between border-b border-darkborder pb-4">
-                <div class="flex items-center space-x-3">
-                    <div class="w-8 h-8 bg-amber-500 rounded-lg flex items-center justify-center font-black text-darkbg text-lg">⚡</div>
-                    <div>
-                        <h2 class="font-black text-base text-white">XAUUSD SNIPER</h2>
-                        <p class="text-[9px] text-gray-400 uppercase font-mono">Institutional AI Engine</p>
-                    </div>
-                </div>
-                <button onclick="toggleDrawer()" class="p-2 hover:bg-darkborder text-gray-400 hover:text-white rounded-lg transition">
-                    <i data-lucide="x" class="w-5 h-5"></i>
-                </button>
-            </div>
-
-            <nav class="space-y-2 text-xs font-bold">
-                <button onclick="switchView('dashboard')" class="w-full px-4 py-3 bg-darkborder/50 hover:bg-darkborder text-white rounded-xl flex items-center space-x-3 transition">
-                    <i data-lucide="layout-dashboard" class="w-4 h-4 text-amber-400"></i>
-                    <span>Live Signal Dashboard</span>
-                </button>
-                <button onclick="switchView('history')" class="w-full px-4 py-3 bg-darkborder/30 hover:bg-darkborder text-gray-300 hover:text-white rounded-xl flex items-center space-x-3 transition">
-                    <i data-lucide="history" class="w-4 h-4 text-blue-400"></i>
-                    <span>30-Day Signal History</span>
-                </button>
-                <button onclick="openSettingsModal()" class="w-full px-4 py-3 bg-darkborder/30 hover:bg-darkborder text-gray-300 hover:text-white rounded-xl flex items-center space-x-3 transition">
-                    <i data-lucide="settings" class="w-4 h-4 text-emerald-400"></i>
-                    <span>Engine Settings & Alerts</span>
-                </button>
-            </nav>
+    <!-- Header -->
+    <header>
+        <div class="header-left">
+            <button class="hamburger-btn" id="hamburgerBtn" aria-label="Open menu">☰</button>
+            <div class="logo">⚡ WINS1 VIP AI</div>
         </div>
-
-        <div class="pt-4 border-t border-darkborder space-y-3">
-            <a href="https://one.exnessonelink.com/a/m3alh1ljmu?source=app" target="_blank" class="w-full py-3 bg-[#ffde00] hover:bg-yellow-400 text-black font-black rounded-xl text-xs flex items-center justify-center space-x-2 transition shadow">
-                <i data-lucide="external-link" class="w-4 h-4"></i>
-                <span>Open Exness Partner Portal</span>
-            </a>
-            <p class="text-[10px] text-gray-500 text-center font-mono">XAUUSD Lightning v3.6</p>
-        </div>
-    </aside>
-
-    <!-- Header Navigation -->
-    <header class="border-b border-darkborder bg-darkcard/90 backdrop-blur sticky top-0 z-40">
-        <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
-            <div class="flex items-center space-x-3">
-                <button onclick="toggleDrawer()" class="p-2 hover:bg-darkborder/60 rounded-xl text-gray-300 hover:text-white transition">
-                    <i data-lucide="menu" class="w-6 h-6"></i>
-                </button>
-
-                <div class="flex items-center space-x-2">
-                    <div class="w-8 h-8 bg-gradient-to-tr from-amber-500 to-yellow-300 rounded-lg flex items-center justify-center text-darkbg font-black text-base shadow">
-                        ⚡
-                    </div>
-                    <div>
-                        <h1 class="font-black text-base tracking-wider text-white">XAUUSD <span class="text-amber-400">SNIPER</span></h1>
-                        <p class="text-[9px] text-gray-400 uppercase font-mono hidden sm:block">Lightning Fast AI Engine</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="flex items-center space-x-3">
-                <div class="bg-darkbg border border-darkborder px-3.5 py-1.5 rounded-xl flex items-center space-x-2.5">
-                    <span id="connIndicator" class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                    <span class="text-[10px] text-gray-400 uppercase font-mono">XAU/USD:</span>
-                    <span id="liveGoldPrice" class="font-mono font-black text-sm text-amber-400">$ 2,738.50</span>
-                </div>
-
-                <a href="https://one.exnessonelink.com/a/m3alh1ljmu?source=app" target="_blank" class="px-3.5 py-1.5 bg-[#ffde00] hover:bg-yellow-400 text-black font-black text-xs rounded-xl transition flex items-center space-x-1 shadow">
-                    <span>EXNESS PORTAL</span>
-                    <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
-                </a>
-            </div>
-        </div>
+        <button class="theme-toggle-btn" id="themeToggleBtn">☀️ Light Mode</button>
     </header>
 
-    <!-- MAIN CONTAINER -->
-    <main class="max-w-6xl mx-auto px-4 py-6 w-full space-y-6 flex-grow">
-
-        <!-- Sponsored Partner Banner -->
-        <a href="https://one.exnessonelink.com/a/m3alh1ljmu?source=app" target="_blank" class="block w-full bg-gradient-to-r from-amber-500/20 via-darkcard to-darkcard border border-amber-500/30 rounded-2xl p-4 hover:border-amber-400 transition shadow-lg group relative overflow-hidden">
-            <div class="flex items-center justify-between gap-4 flex-wrap md:flex-nowrap">
-                <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 bg-[#ffde00] rounded-xl flex items-center justify-center font-black text-black text-xs tracking-tighter shadow-md shrink-0">
-                        exness
-                    </div>
-                    <div class="space-y-0.5">
-                        <div class="flex items-center space-x-2">
-                            <span class="text-[10px] font-black uppercase text-amber-400 tracking-wider bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/20">Official Partner</span>
-                            <span class="text-xs font-extrabold text-white">Execute Sniper Signals with 0.0 Pips Gold Spreads</span>
-                        </div>
-                        <p class="text-[11px] text-gray-300">Receive <strong class="text-amber-400 font-bold">$10,000 in virtual funds</strong> and learn how to trade with a market leader.</p>
-                    </div>
-                </div>
-                <div class="px-4 py-2 bg-amber-500 text-darkbg font-black rounded-xl text-xs flex items-center space-x-1 shadow transition shrink-0 group-hover:scale-105">
-                    <span>Trade XAUUSD Now</span>
-                    <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                </div>
-            </div>
-        </a>
-
-        <!-- DASHBOARD VIEW -->
-        <div id="dashboardView" class="space-y-6">
-            <!-- Stats Overview Bar -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                <div class="bg-darkcard border border-darkborder p-3.5 rounded-xl space-y-1">
-                    <span class="text-[10px] text-gray-400 uppercase font-mono">30D AI Accuracy</span>
-                    <p class="text-lg font-black text-emerald-400 font-mono" id="statWinRate">91.8%</p>
-                </div>
-                <div class="bg-darkcard border border-darkborder p-3.5 rounded-xl space-y-1">
-                    <span class="text-[10px] text-gray-400 uppercase font-mono">Total Net Pips</span>
-                    <p class="text-lg font-black text-amber-400 font-mono" id="statPips">+ 1,240 Pips</p>
-                </div>
-                <div class="bg-darkcard border border-darkborder p-3.5 rounded-xl space-y-1">
-                    <span class="text-[10px] text-gray-400 uppercase font-mono">Avg Risk-Reward</span>
-                    <p class="text-lg font-black text-blue-400 font-mono">1 : 3.4</p>
-                </div>
-                <div class="bg-darkcard border border-darkborder p-3.5 rounded-xl space-y-1">
-                    <span class="text-[10px] text-gray-400 uppercase font-mono">Engine Latency</span>
-                    <p class="text-xs font-bold text-emerald-400 flex items-center gap-1.5">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                        <span>0.02s INSTANT</span>
-                    </p>
-                </div>
-            </div>
-
-            <!-- MAIN GRID -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- TradingView Chart -->
-                <div class="lg:col-span-2 bg-darkcard border border-darkborder rounded-2xl p-4 space-y-3">
-                    <div class="flex justify-between items-center text-xs font-bold">
-                        <span class="text-gray-300 flex items-center gap-2">
-                            <i data-lucide="line-chart" class="w-4 h-4 text-amber-400"></i>
-                            <span>Live TradingView Chart (XAUUSD)</span>
-                        </span>
-                        <span class="text-[10px] text-gray-500 font-mono">15M Timeframe</span>
-                    </div>
-                    <div id="tradingview_chart" class="h-[360px] w-full rounded-xl overflow-hidden border border-darkborder/60"></div>
-                </div>
-
-                <!-- Risk & Lot Size Calculator -->
-                <div class="bg-darkcard border border-darkborder rounded-2xl p-5 space-y-4">
-                    <div class="flex items-center space-x-2 border-b border-darkborder pb-3">
-                        <i data-lucide="calculator" class="w-5 h-5 text-amber-400"></i>
-                        <h3 class="text-xs font-black uppercase text-white tracking-wider">Sniper Risk & Lot Size Calculator</h3>
-                    </div>
-
-                    <div class="space-y-3 text-xs">
-                        <div>
-                            <label class="text-[10px] text-gray-400 uppercase font-mono block mb-1">Account Balance ($)</label>
-                            <input type="number" id="calcEquity" value="1000" oninput="calculateLotSize()" class="w-full bg-darkbg border border-darkborder rounded-xl px-3 py-2 text-white font-mono focus:outline-none focus:border-amber-400">
-                        </div>
-
-                        <div>
-                            <label class="text-[10px] text-gray-400 uppercase font-mono block mb-1">Risk Percentage (%)</label>
-                            <input type="number" id="calcRiskPct" value="2" step="0.5" oninput="calculateLotSize()" class="w-full bg-darkbg border border-darkborder rounded-xl px-3 py-2 text-white font-mono focus:outline-none focus:border-amber-400">
-                        </div>
-
-                        <div>
-                            <label class="text-[10px] text-gray-400 uppercase font-mono block mb-1">Stop Loss Distance (Pips)</label>
-                            <input type="number" id="calcSlPips" value="30" oninput="calculateLotSize()" class="w-full bg-darkbg border border-darkborder rounded-xl px-3 py-2 text-white font-mono focus:outline-none focus:border-amber-400">
-                        </div>
-
-                        <div class="bg-darkbg/90 border border-emerald-500/30 p-3 rounded-xl space-y-2">
-                            <div class="flex justify-between items-center">
-                                <span class="text-gray-400 text-[11px]">Recommended Lot Size:</span>
-                                <span id="calcResultLot" class="text-base font-black text-amber-400 font-mono">0.07 Lots</span>
-                            </div>
-                            <div class="flex justify-between items-center text-[10px]">
-                                <span class="text-gray-500">Max Risk Amount:</span>
-                                <span id="calcResultRisk" class="font-mono text-red-400">$ 20.00</span>
-                            </div>
-                        </div>
-
-                        <a href="https://one.exnessonelink.com/a/m3alh1ljmu?source=app" target="_blank" class="w-full py-2.5 bg-[#ffde00] hover:bg-yellow-400 text-black font-black text-xs rounded-xl transition flex items-center justify-center space-x-1.5 shadow">
-                            <span>Trade on Exness Partner</span>
-                            <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ACTIVE HIGH-CONFLUENCE SIGNAL DISPLAY -->
-            <section class="space-y-3">
-                <div class="flex justify-between items-center">
-                    <h2 class="text-xs font-black uppercase tracking-wider text-gray-400 flex items-center gap-2">
-                        <i data-lucide="crosshair" class="w-4 h-4 text-amber-400"></i>
-                        <span>Live High-Confluence AI Signal</span>
-                    </h2>
-                    <span class="text-[10px] text-emerald-400 font-mono font-bold bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20">
-                        ⚡ Instant Stream Active
-                    </span>
-                </div>
-
-                <div id="signalsContainer" class="space-y-4">
-                    <!-- Populated dynamically -->
-                </div>
-            </section>
+    <!-- Hamburger Sidebar Drawer -->
+    <div class="drawer-overlay" id="drawerOverlay"></div>
+    <nav class="drawer" id="drawer">
+        <div class="drawer-header">
+            <div class="logo" style="font-size: 18px;">Navigation Menu</div>
+            <button class="drawer-close" id="drawerClose">✕</button>
         </div>
+        <ul class="drawer-menu-items">
+            <li><a href="#" onclick="switchTab('vip')">👑 Odd 400+ VIP Tickets</a></li>
+            <li><a href="#" onclick="switchTab('btts')">🎯 BTTS AI 100% Predictions</a></li>
+            <li><a href="#" onclick="switchTab('daily')">📅 Daily Fixtures & Calendar</a></li>
+            <hr style="border:0; border-top:1px solid var(--border); margin:5px 0;">
+            <li>
+                <label style="display:flex; align-items:center; justify-content:space-between; width:100%;">
+                    <span>🤖 BTTS Filter (AI Mode)</span>
+                    <input type="checkbox" id="drawerBttsToggle" checked onchange="toggleBttsFilter(this.checked)" style="width:18px; height:18px; cursor:pointer;">
+                </label>
+            </li>
+            <li><a href="https://one.exnessonelink.com/a/m3alh1ljmu?source=app" target="_blank">📈 Exness Partner Trading</a></li>
+        </ul>
+    </nav>
 
-        <!-- 30-DAY SIGNAL HISTORY VIEW -->
-        <div id="historyView" class="space-y-4 hidden">
-            <div class="bg-darkcard border border-darkborder rounded-2xl p-5 space-y-4">
-                <div class="flex flex-wrap justify-between items-center border-b border-darkborder pb-4 gap-3">
-                    <div>
-                        <h2 class="text-base font-black text-white flex items-center gap-2">
-                            <i data-lucide="calendar" class="w-5 h-5 text-amber-400"></i>
-                            <span>30-Day Historical Signal Log</span>
-                        </h2>
-                        <p class="text-xs text-gray-400">Inspect past trades, outcomes (TP/SL), and institutional confluences up to -30 days.</p>
-                    </div>
-
-                    <div class="flex items-center space-x-2">
-                        <span class="text-xs text-gray-400 font-bold uppercase tracking-wider">Select Date:</span>
-                        <input type="date" id="historyDatePicker" onchange="filterHistoryByDate(this.value)" class="bg-darkbg border border-darkborder text-amber-400 font-mono font-bold text-xs rounded-xl px-3 py-1.5 focus:outline-none cursor-pointer">
-                    </div>
-                </div>
-
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs font-medium">
-                        <thead class="bg-darkbg/60 border-b border-darkborder text-gray-400 uppercase font-mono text-[10px]">
-                            <tr>
-                                <th class="p-3">Date & Time</th>
-                                <th class="p-3">Type</th>
-                                <th class="p-3">Entry</th>
-                                <th class="p-3">Stop Loss</th>
-                                <th class="p-3">Target TP</th>
-                                <th class="p-3">Result Outcome</th>
-                                <th class="p-3">Institutional Confluence</th>
-                            </tr>
-                        </thead>
-                        <tbody id="historyTableBody" class="divide-y divide-darkborder/50 text-gray-300 font-mono">
-                            <!-- Populated dynamically -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-    </main>
-
-    <!-- SETTINGS & ALERTS MODAL -->
-    <div id="settingsModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-darkcard border border-darkborder rounded-2xl max-w-md w-full p-6 space-y-5 relative shadow-2xl">
-            <button onclick="closeSettingsModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white">
-                <i data-lucide="x" class="w-5 h-5"></i>
-            </button>
-
-            <div class="flex items-center space-x-2 text-amber-400 text-xs font-bold uppercase tracking-wider">
-                <i data-lucide="bell" class="w-4 h-4"></i>
-                <span>Engine Settings & Signal Alerts</span>
-            </div>
-
-            <div class="space-y-4 text-xs">
-                <div class="flex justify-between items-center p-3 bg-darkbg/80 border border-darkborder rounded-xl">
-                    <div>
-                        <span class="font-bold text-gray-200 block">Min AI Probability Filter</span>
-                        <span class="text-gray-400 text-[10px]">Only fire signals above confidence threshold</span>
-                    </div>
-                    <select id="settingMinProb" class="bg-darkcard border border-darkborder text-white text-xs rounded-lg px-2.5 py-1 focus:outline-none font-mono">
-                        <option value="88">88% (Standard)</option>
-                        <option value="90" selected>90% (High Quality)</option>
-                        <option value="95">95% (Ultra Selective)</option>
-                    </select>
-                </div>
-
-                <div class="flex justify-between items-center p-3 bg-darkbg/80 border border-darkborder rounded-xl">
-                    <div>
-                        <span class="font-bold text-gray-200 block">Sound Chime Alerts</span>
-                        <span class="text-gray-400 text-[10px]">Play sound alert on new sniper signal</span>
-                    </div>
-                    <input type="checkbox" id="settingSoundAlerts" checked class="w-4 h-4 accent-amber-500 rounded cursor-pointer">
-                </div>
-
-                <div class="flex justify-between items-center p-3 bg-darkbg/80 border border-darkborder rounded-xl">
-                    <div>
-                        <span class="font-bold text-gray-200 block">Browser Push Notifications</span>
-                        <span class="text-gray-400 text-[10px]">Display popup toast notifications on signal trigger</span>
-                    </div>
-                    <input type="checkbox" id="settingPushNotifs" checked class="w-4 h-4 accent-emerald-500 rounded cursor-pointer">
-                </div>
-
-                <div class="flex justify-between items-center p-3 bg-darkbg/80 border border-darkborder rounded-xl">
-                    <div>
-                        <span class="font-bold text-gray-200 block">Smart Money Confluence</span>
-                        <span class="text-gray-400 text-[10px]">Require FVG + CVD + DOM Imbalance match</span>
-                    </div>
-                    <input type="checkbox" id="settingSmcFilter" checked class="w-4 h-4 accent-emerald-500 rounded cursor-pointer">
-                </div>
-            </div>
-
-            <button onclick="saveSettings()" class="w-full py-2.5 bg-amber-500 hover:bg-amber-600 text-darkbg font-bold text-xs rounded-xl transition shadow">
-                Save & Apply Settings
-            </button>
-        </div>
+    <!-- Calendar Navigation Strip (-30 to +30 Days) -->
+    <div class="calendar-nav-container">
+        <div class="calendar-strip" id="calendarStrip"></div>
     </div>
 
-    <!-- Footer -->
-    <footer class="border-t border-darkborder bg-darkcard py-4 text-center text-[11px] text-gray-500">
-        <p>XAUUSD Live Sniper Signals Platform v3.6 • Lightning-Fast SMC + Order Flow Engine</p>
+    <!-- Main Content Area -->
+    <main>
+        <!-- Section Tabs -->
+        <div class="section-tabs">
+            <button class="tab-btn active" onclick="switchTab('vip')">Odd 400+ VIP Ticket</button>
+            <button class="tab-btn" onclick="switchTab('btts')">BTTS AI 100%</button>
+            <button class="tab-btn" onclick="switchTab('daily')">Match Calendar</button>
+        </div>
+
+        <!-- Tab 1: Odd 400+ VIP Ticket -->
+        <div id="tab-vip" class="tab-content active">
+            <div class="card vip-ticket-card">
+                <span class="badge badge-vip">VIP Odd 458.50</span>
+                <div class="card-header">AI Master Combo Ticket • Target Date Selected</div>
+                <div class="match-teams">🚀 Mega Accumulator Slip</div>
+                <div class="ticket-stats">
+                    <div class="stat-item">
+                        <div class="label">Total Odds</div>
+                        <div class="value" style="color: var(--vip-gold);">458.50</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="label">AI Confidence</div>
+                        <div class="value">99.4%</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="label">Matches</div>
+                        <div class="value">6 Legs</div>
+                    </div>
+                </div>
+                <div id="vipMatchesList"></div>
+            </div>
+        </div>
+
+        <!-- Tab 2: BTTS AI 100% Predictions -->
+        <div id="tab-btts" class="tab-content">
+            <div style="font-size: 14px; color: var(--text-secondary); margin-bottom: 5px;">
+                Both Teams To Score (BTTS) AI mathematical probability model filtered for selected calendar date.
+            </div>
+            <div id="bttsMatchesList"></div>
+        </div>
+
+        <!-- Tab 3: Match Calendar View -->
+        <div id="tab-daily" class="tab-content">
+            <div class="card">
+                <div class="match-teams" style="font-size:16px;">📅 Active Date Schedule</div>
+                <p id="selectedDateDisplay" style="color: var(--accent); font-weight:700; margin-top:5px;"></p>
+                <div id="dailyMatchesList" style="margin-top: 15px; display:flex; flex-direction:column; gap:12px;"></div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        © 2026 Wins1 Big Odds AI Prediction Engine. 18+ Gamble Responsibly. Partnered with Exness.
     </footer>
 
-    <!-- JAVASCRIPT ENGINE -->
     <script>
-        let livePrice = 2738.50;
-        let activeSignal = null;
-        let priceHistory = [];
-        let historyLog = [];
+        // Theme Toggle Logic
+        const themeToggleBtn = document.getElementById('themeToggleBtn');
+        const htmlElement = document.documentElement;
 
-        let userSettings = {
-            minProb: 90,
-            soundAlerts: true,
-            pushNotifs: true,
-            smcFilter: true
-        };
+        themeToggleBtn.addEventListener('click', () => {
+            const currentTheme = htmlElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            htmlElement.setAttribute('data-theme', newTheme);
+            themeToggleBtn.textContent = newTheme === 'dark' ? '☀️ Light Mode' : '🌙 Dark Mode';
+        });
 
-        if (window.lucide) lucide.createIcons();
+        // Hamburger Menu Drawer Logic
+        const hamburgerBtn = document.getElementById('hamburgerBtn');
+        const drawer = document.getElementById('drawer');
+        const drawerOverlay = document.getElementById('drawerOverlay');
+        const drawerClose = document.getElementById('drawerClose');
 
         function toggleDrawer() {
-            const drawer = document.getElementById('navDrawer');
-            const backdrop = document.getElementById('drawerBackdrop');
-            drawer.classList.toggle('-translate-x-full');
-            backdrop.classList.toggle('hidden');
+            drawer.classList.toggle('open');
+            drawerOverlay.classList.toggle('active');
         }
 
-        function switchView(viewName) {
-            toggleDrawer();
-            document.getElementById('dashboardView').classList.add('hidden');
-            document.getElementById('historyView').classList.add('hidden');
+        hamburgerBtn.addEventListener('click', toggleDrawer);
+        drawerClose.addEventListener('click', toggleDrawer);
+        drawerOverlay.addEventListener('click', toggleDrawer);
 
-            if (viewName === 'dashboard') {
-                document.getElementById('dashboardView').classList.remove('hidden');
-            } else if (viewName === 'history') {
-                document.getElementById('historyView').classList.remove('hidden');
-                initHistoryDatePicker();
-            }
+        // Tab Switching
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById('tab-' + tabName).classList.add('active');
+            if(tabName === 'vip') document.querySelectorAll('.tab-btn')[0].classList.add('active');
+            if(tabName === 'btts') document.querySelectorAll('.tab-btn')[1].classList.add('active');
+            if(tabName === 'daily') document.querySelectorAll('.tab-btn')[2].classList.add('active');
+
+            if(drawer.classList.contains('open')) toggleDrawer();
         }
 
-        function openSettingsModal() {
-            document.getElementById('settingMinProb').value = userSettings.minProb;
-            document.getElementById('settingSoundAlerts').checked = userSettings.soundAlerts;
-            document.getElementById('settingPushNotifs').checked = userSettings.pushNotifs;
-            document.getElementById('settingSmcFilter').checked = userSettings.smcFilter;
-            document.getElementById('settingsModal').classList.remove('hidden');
+        // Calendar Generator (-30 to +30 Days from Today)
+        const calendarStrip = document.getElementById('calendarStrip');
+        const today = new Date();
+        let selectedDateStr = formatDate(today);
+
+        function formatDate(date) {
+            return date.toISOString().split('T')[0];
         }
 
-        function closeSettingsModal() {
-            document.getElementById('settingsModal').classList.add('hidden');
+        for (let i = -30; i <= 30; i++) {
+            const d = new Date(today);
+            d.setDate(today.getDate() + i);
+            const dateStr = formatDate(d);
+
+            const btn = document.createElement('button');
+            btn.className = `cal-day-btn ${i === 0 ? 'active' : ''}`;
+            btn.dataset.date = dateStr;
+
+            const dayName = d.toLocaleDateString('en-US', { weekday: 'short' });
+            const dayDate = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+            btn.innerHTML = `<div class="day-name">${i === 0 ? 'Today' : dayName}</div><div class="day-date">${dayDate}</div>`;
+            
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.cal-day-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                selectedDateStr = dateStr;
+                updateDynamicContent(selectedDateStr);
+            });
+
+            calendarStrip.appendChild(btn);
         }
 
-        function saveSettings() {
-            userSettings.minProb = parseInt(document.getElementById('settingMinProb').value);
-            userSettings.soundAlerts = document.getElementById('settingSoundAlerts').checked;
-            userSettings.pushNotifs = document.getElementById('settingPushNotifs').checked;
-            userSettings.smcFilter = document.getElementById('settingSmcFilter').checked;
-            closeSettingsModal();
-            showToast("Settings & Alert preferences updated successfully!", "success");
-        }
+        // Mock Dynamic Data Generator based on Selected Date & BTTS Filter
+        function updateDynamicContent(dateStr) {
+            document.getElementById('selectedDateDisplay').textContent = `Showing AI Predictions & Tickets for: ${dateStr}`;
 
-        function showToast(message, type = "info") {
-            if (!userSettings.pushNotifs) return;
-            const container = document.getElementById('toastContainer');
-            if (!container) return;
-
-            const toast = document.createElement('div');
-            toast.className = `pointer-events-auto bg-darkcard border ${type === 'success' ? 'border-emerald-500/50 text-emerald-400' : 'border-amber-500/50 text-amber-400'} px-4 py-3 rounded-xl shadow-2xl flex items-center space-x-3 text-xs font-bold animate-slide-in`;
-            toast.innerHTML = `
-                <i data-lucide="${type === 'success' ? 'check-circle-2' : 'bell'}" class="w-4 h-4 shrink-0"></i>
-                <span>${message}</span>
-            `;
-            container.appendChild(toast);
-            if (window.lucide) lucide.createIcons();
-
-            setTimeout(() => {
-                toast.style.opacity = '0';
-                setTimeout(() => toast.remove(), 300);
-            }, 4000);
-        }
-
-        function playSoundChime() {
-            if (!userSettings.soundAlerts) return;
-            try {
-                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(880, audioCtx.currentTime);
-                gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                osc.start();
-                osc.stop(audioCtx.currentTime + 0.4);
-            } catch (e) {}
-        }
-
-        function initTradingViewChart() {
-            if (typeof TradingView !== 'undefined') {
-                new TradingView.widget({
-                    "autosize": true,
-                    "symbol": "OANDA:XAUUSD",
-                    "interval": "15",
-                    "timezone": "Etc/UTC",
-                    "theme": "dark",
-                    "style": "1",
-                    "locale": "en",
-                    "toolbar_bg": "#12161f",
-                    "enable_publishing": false,
-                    "hide_side_toolbar": false,
-                    "container_id": "tradingview_chart"
-                });
-            }
-        }
-
-        function loadSavedSignal() {
-            const saved = localStorage.getItem('activeSniperSignal');
-            if (saved) {
-                try {
-                    activeSignal = JSON.parse(saved);
-                    renderActiveSignalCard();
-                } catch (e) {
-                    console.warn("Could not load saved signal");
-                }
-            }
-        }
-
-        function initPriceStream() {
-            setInterval(() => {
-                const drift = (Math.random() - 0.49) * 0.45;
-                updatePriceDisplay(livePrice + drift);
-            }, 600);
-
-            setInterval(async () => {
-                try {
-                    const res = await fetch('https://api.gold-api.com/price/XAU');
-                    if (res.ok) {
-                        const data = await res.json();
-                        if (data && data.price) {
-                            livePrice = parseFloat(data.price);
-                        }
-                    }
-                } catch (e) {}
-            }, 5000);
-        }
-
-        function updatePriceDisplay(newPrice) {
-            livePrice = parseFloat(newPrice.toFixed(2));
-            priceHistory.push(livePrice);
-            if (priceHistory.length > 50) priceHistory.shift();
-
-            const priceEl = document.getElementById('liveGoldPrice');
-            if (priceEl) {
-                priceEl.innerText = `$ ${livePrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-            }
-
-            evaluateSniperEngine();
-        }
-
-        function evaluateSniperEngine() {
-            if (!activeSignal) {
-                evaluateAndTriggerHighProbabilitySignal();
-                return;
-            }
-
-            const isBuy = activeSignal.type === "BUY";
-            const sl = parseFloat(activeSignal.sl);
-            const tp1 = parseFloat(activeSignal.tp1);
-            const tp2 = parseFloat(activeSignal.tp2);
-            const tp3 = parseFloat(activeSignal.tp3);
-
-            if (isBuy) {
-                if (livePrice <= sl) {
-                    closeSignalOutcome(false, "SL Hit (-30 Pips)");
-                } else if (livePrice >= tp3) {
-                    closeSignalOutcome(true, "TP3 Hit (+150 Pips)");
-                } else if (livePrice >= tp2 && !activeSignal.tp2Hit) {
-                    activeSignal.tp2Hit = true;
-                    saveActiveSignal();
-                    renderActiveSignalCard();
-                } else if (livePrice >= tp1 && !activeSignal.tp1Hit) {
-                    activeSignal.tp1Hit = true;
-                    saveActiveSignal();
-                    renderActiveSignalCard();
-                }
-            } else {
-                if (livePrice >= sl) {
-                    closeSignalOutcome(false, "SL Hit (-30 Pips)");
-                } else if (livePrice <= tp3) {
-                    closeSignalOutcome(true, "TP3 Hit (+150 Pips)");
-                } else if (livePrice <= tp2 && !activeSignal.tp2Hit) {
-                    activeSignal.tp2Hit = true;
-                    saveActiveSignal();
-                    renderActiveSignalCard();
-                } else if (livePrice <= tp1 && !activeSignal.tp1Hit) {
-                    activeSignal.tp1Hit = true;
-                    saveActiveSignal();
-                    renderActiveSignalCard();
-                }
-            }
-        }
-
-        function saveActiveSignal() {
-            localStorage.setItem('activeSniperSignal', JSON.stringify(activeSignal));
-        }
-
-        function evaluateAndTriggerHighProbabilitySignal() {
-            const confidence = userSettings.minProb + Math.floor(Math.random() * (96 - userSettings.minProb));
-            if (confidence < userSettings.minProb) return;
-
-            const isBuy = priceHistory.length > 5 
-                ? (priceHistory[priceHistory.length - 1] >= priceHistory[0]) 
-                : (Math.random() > 0.45);
-
-            const entry = livePrice;
-            const slPips = 3.00;
-            const tp1Pips = 4.50;
-            const tp2Pips = 9.00;
-            const tp3Pips = 15.00;
-
-            const type = isBuy ? "BUY" : "SELL";
-            const sl = isBuy ? entry - slPips : entry + slPips;
-            const tp1 = isBuy ? entry + tp1Pips : entry - tp1Pips;
-            const tp2 = isBuy ? entry + tp2Pips : entry - tp2Pips;
-            const tp3 = isBuy ? entry + tp3Pips : entry - tp3Pips;
-
-            activeSignal = {
-                id: Date.now(),
-                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-                date: new Date().toISOString().split('T')[0],
-                type: type,
-                timeframe: "M15 (Order Block Retest)",
-                entry: entry.toFixed(2),
-                sl: sl.toFixed(2),
-                tp1: tp1.toFixed(2),
-                tp2: tp2.toFixed(2),
-                tp3: tp3.toFixed(2),
-                confidence: confidence,
-                tp1Hit: false,
-                tp2Hit: false,
-                rationale: isBuy 
-                    ? "SMC Liquidity Sweep + Cumulative Delta (CVD +385) seller exhaustion + DOM passive bid stack absorption." 
-                    : "SMC High Liquidity Grab + Cumulative Delta (CVD -420) aggressive selling pressure + Footprint diagonal imbalance."
-            };
-
-            saveActiveSignal();
-            renderActiveSignalCard();
-            playSoundChime();
-            showToast(`🔥 New High-Probability Sniper ${type} Signal at $${entry} (${confidence}% Conf.)!`, "success");
-        }
-
-        function renderActiveSignalCard() {
-            const container = document.getElementById('signalsContainer');
-            if (!container || !activeSignal) return;
-
-            const isBuy = activeSignal.type === "BUY";
-            container.innerHTML = `
-                <div class="bg-darkcard border ${isBuy ? 'border-emerald-500/40 glow-green' : 'border-red-500/40 glow-red'} rounded-2xl p-5 space-y-4 relative overflow-hidden">
-                    <div class="flex justify-between items-center border-b border-darkborder/80 pb-3">
-                        <div class="flex items-center space-x-3">
-                            <span class="px-3 py-1 ${isBuy ? 'bg-emerald-500 text-darkbg' : 'bg-red-500 text-white'} font-black text-xs rounded-lg uppercase tracking-wider">
-                                🔥 SNIPER ${activeSignal.type}
-                            </span>
-                            <span class="text-xs text-gray-400 font-mono font-bold">${activeSignal.timeframe}</span>
-                        </div>
-                        <span class="text-[10px] bg-amber-500/20 text-amber-400 px-2.5 py-1 rounded-full font-black border border-amber-500/30">
-                            ${activeSignal.confidence}% PROBABILITY
-                        </span>
+            // Render VIP Odd 400+ Matches
+            const vipContainer = document.getElementById('vipMatchesList');
+            vipContainer.innerHTML = `
+                <div style="display:flex; flex-direction:column; gap:12px; margin-top:10px;">
+                    <div class="card" style="padding:12px;">
+                        <div class="card-header">19:00 • EPL | Odds: 2.15</div>
+                        <div class="match-teams" style="font-size:15px;">Arsenal vs Chelsea</div>
+                        <div class="ai-analysis-box"><strong>AI Prediction:</strong> Over 2.5 Goals & BTTS (Confidence: 94.2%). Expected xG ratio: 2.14 vs 1.68.</div>
                     </div>
-
-                    <div class="grid grid-cols-2 md:grid-cols-5 gap-3 text-xs font-mono">
-                        <div class="bg-darkbg/80 border border-darkborder p-2.5 rounded-xl">
-                            <span class="text-[9px] text-gray-400 block uppercase">Entry Zone</span>
-                            <span class="text-sm font-bold text-white">$ ${activeSignal.entry}</span>
-                        </div>
-                        <div class="bg-darkbg/80 border border-red-500/20 p-2.5 rounded-xl">
-                            <span class="text-[9px] text-red-400 block uppercase">Stop Loss (SL)</span>
-                            <span class="text-sm font-bold text-red-400">$ ${activeSignal.sl}</span>
-                        </div>
-                        <div class="bg-darkbg/80 border ${activeSignal.tp1Hit ? 'border-emerald-500 bg-emerald-500/10' : 'border-emerald-500/20'} p-2.5 rounded-xl">
-                            <span class="text-[9px] text-emerald-400 block uppercase">TP 1 ${activeSignal.tp1Hit ? '✓ HIT' : ''}</span>
-                            <span class="text-sm font-bold text-emerald-400">$ ${activeSignal.tp1}</span>
-                        </div>
-                        <div class="bg-darkbg/80 border ${activeSignal.tp2Hit ? 'border-emerald-500 bg-emerald-500/10' : 'border-emerald-500/20'} p-2.5 rounded-xl">
-                            <span class="text-[9px] text-emerald-400 block uppercase">TP 2 ${activeSignal.tp2Hit ? '✓ HIT' : ''}</span>
-                            <span class="text-sm font-bold text-emerald-400">$ ${activeSignal.tp2}</span>
-                        </div>
-                        <div class="bg-darkbg/80 border border-amber-500/30 p-2.5 rounded-xl col-span-2 md:col-span-1">
-                            <span class="text-[9px] text-amber-400 block uppercase">Sniper TP 3 (Max)</span>
-                            <span class="text-sm font-black text-amber-400">$ ${activeSignal.tp3}</span>
-                        </div>
+                    <div class="card" style="padding:12px;">
+                        <div class="card-header">21:00 • La Liga | Odds: 3.40</div>
+                        <div class="match-teams" style="font-size:15px;">Real Madrid vs Barcelona</div>
+                        <div class="ai-analysis-box"><strong>AI Prediction:</strong> HT/FT: Draw / Real Madrid (Confidence: 91.8%). Order flow odds movement indicates sharp money backing home side.</div>
                     </div>
-
-                    <div class="bg-darkbg/50 border border-darkborder/60 p-3 rounded-xl text-xs space-y-1">
-                        <span class="text-[9px] text-amber-400 uppercase font-mono block">Institutional SMC + Order Flow Confluence</span>
-                        <p class="text-gray-300 italic">${activeSignal.rationale}</p>
-                    </div>
-
-                    <div class="flex flex-wrap justify-between items-center gap-2 pt-1">
-                        <button onclick="copySignalText('${activeSignal.type}', '${activeSignal.entry}', '${activeSignal.sl}', '${activeSignal.tp2}')" class="px-4 py-2 bg-darkborder hover:bg-gray-700 text-gray-200 text-xs font-bold rounded-xl transition flex items-center space-x-2">
-                            <i data-lucide="copy" class="w-3.5 h-3.5"></i>
-                            <span>Copy Signal Metrics</span>
-                        </button>
-
-                        <a href="https://one.exnessonelink.com/a/m3alh1ljmu?source=app" target="_blank" class="px-5 py-2 bg-[#ffde00] hover:bg-yellow-400 text-black font-black text-xs rounded-xl transition flex items-center space-x-1.5 shadow">
-                            <i data-lucide="zap" class="w-4 h-4"></i>
-                            <span>Execute Trade on Exness</span>
-                        </a>
+                    <div class="card" style="padding:12px;">
+                        <div class="card-header">22:00 • Serie A | Odds: 2.85</div>
+                        <div class="match-teams" style="font-size:15px;">Inter Milan vs AC Milan</div>
+                        <div class="ai-analysis-box"><strong>AI Prediction:</strong> BTTS - Yes (Confidence: 96.5%). Both defenses missing key central defenders.</div>
                     </div>
                 </div>
             `;
-            if (window.lucide) lucide.createIcons();
+
+            // Render BTTS AI Matches
+            const bttsContainer = document.getElementById('bttsMatchesList');
+            bttsContainer.innerHTML = `
+                <div class="card">
+                    <span class="badge badge-btts">BTTS 100% AI</span>
+                    <div class="card-header">20:30 • Bundesliga • ${dateStr}</div>
+                    <div class="match-teams">Bayern Munich vs RB Leipzig</div>
+                    <div class="ticket-stats">
+                        <div class="stat-item"><div class="label">BTTS Prob</div><div class="value">98.5%</div></div>
+                        <div class="stat-item"><div class="label">Odd</div><div class="value">1.65</div></div>
+                        <div class="stat-item"><div class="label">Form Index</div><div class="value">5/5</div></div>
+                    </div>
+                    <div class="ai-analysis-box"><strong>Neural Network Analysis:</strong> Combined home/away scoring rate stands at 3.8 goals per match. Defensive transition vulnerability detected on both flanks.</div>
+                </div>
+                <div class="card" style="margin-top:12px;">
+                    <span class="badge badge-btts">BTTS 100% AI</span>
+                    <div class="card-header">21:45 • Ligue 1 • ${dateStr}</div>
+                    <div class="match-teams">Marseille vs Monaco</div>
+                    <div class="ticket-stats">
+                        <div class="stat-item"><div class="label">BTTS Prob</div><div class="value">96.8%</div></div>
+                        <div class="stat-item"><div class="label">Odd</div><div class="value">1.78</div></div>
+                        <div class="stat-item"><div class="label">Form Index</div><div class="value">4/5</div></div>
+                    </div>
+                    <div class="ai-analysis-box"><strong>Neural Network Analysis:</strong> High pressing intensity metrics guarantee open spaces in defensive thirds. Both teams scored in last 6 Head-to-Head encounters.</div>
+                </div>
+            `;
+
+            // Render Daily Schedule
+            const dailyContainer = document.getElementById('dailyMatchesList');
+            dailyContainer.innerHTML = `
+                <div style="padding:10px; background:var(--bg-primary); border-radius:8px; border:1px solid var(--border);">
+                    <div style="font-size:12px; color:var(--text-secondary);">17:30 • Premier League</div>
+                    <div style="font-weight:700; font-size:15px; margin:4px 0;">Manchester City vs Liverpool</div>
+                    <div style="font-size:13px; color:var(--accent);">AI Pick: Home Win & BTTS (Odds: 3.10)</div>
+                </div>
+                <div style="padding:10px; background:var(--bg-primary); border-radius:8px; border:1px solid var(--border);">
+                    <div style="font-size:12px; color:var(--text-secondary);">20:00 • Serie A</div>
+                    <div style="font-weight:700; font-size:15px; margin:4px 0;">Napoli vs Juventus</div>
+                    <div style="font-size:13px; color:var(--accent);">AI Pick: Under 2.5 Goals (Odds: 1.85)</div>
+                </div>
+            `;
         }
 
-        function closeSignalOutcome(win, pnlText) {
-            if (!activeSignal) return;
-            historyLog.unshift({
-                date: activeSignal.date,
-                time: activeSignal.time,
-                type: activeSignal.type,
-                entry: parseFloat(activeSignal.entry),
-                sl: parseFloat(activeSignal.sl),
-                tp: parseFloat(activeSignal.tp2),
-                result: pnlText,
-                win: win,
-                rationale: activeSignal.rationale
-            });
-
-            localStorage.removeItem('activeSniperSignal');
-            activeSignal = null;
-            renderHistoryTable();
-            evaluateAndTriggerHighProbabilitySignal();
+        function toggleBttsFilter(isChecked) {
+            console.log("BTTS AI Filter toggled:", isChecked);
         }
 
-        function initHistoryDatePicker() {
-            const picker = document.getElementById('historyDatePicker');
-            const today = new Date().toISOString().split('T')[0];
-            if (picker) {
-                picker.value = today;
-                picker.max = today;
-                const minDate = new Date();
-                minDate.setDate(minDate.getDate() - 30);
-                picker.min = minDate.toISOString().split('T')[0];
-            }
-            populateHistoricalData();
-            renderHistoryTable();
-        }
-
-        function populateHistoricalData() {
-            if (historyLog.length >= 15) return;
-            const basePrice = 2730.00;
-            for (let i = 0; i < 30; i++) {
-                const dateObj = new Date();
-                dateObj.setDate(dateObj.getDate() - i);
-                const dateStr = dateObj.toISOString().split('T')[0];
-
-                const isWin = Math.random() > 0.10;
-                const isBuy = Math.random() > 0.5;
-                const entry = basePrice + (Math.random() - 0.5) * 40;
-                const pnl = isWin ? `TP${Math.floor(Math.random() * 3) + 1} Hit (+${60 + Math.floor(Math.random() * 80)} Pips)` : "SL Hit (-30 Pips)";
-
-                historyLog.push({
-                    date: dateStr,
-                    time: `${10 + (i % 8)}:${15 + (i * 3) % 40} AM`,
-                    type: isBuy ? "BUY" : "SELL",
-                    entry: parseFloat(entry.toFixed(2)),
-                    sl: parseFloat((isBuy ? entry - 3.0 : entry + 3.0).toFixed(2)),
-                    tp: parseFloat((isBuy ? entry + 9.0 : entry - 9.0).toFixed(2)),
-                    result: pnl,
-                    win: isWin,
-                    rationale: isBuy ? "SMC Liquidity Grab + Footprint Buying Absorption" : "Fair Value Gap Retest + CVD Aggressive Seller Surge"
-                });
-            }
-        }
-
-        function filterHistoryByDate(selectedDate) {
-            renderHistoryTable(selectedDate);
-        }
-
-        function renderHistoryTable(filterDate) {
-            const tbody = document.getElementById('historyTableBody');
-            if (!tbody) return;
-
-            tbody.innerHTML = '';
-            const filtered = filterDate ? historyLog.filter(h => h.date === filterDate) : historyLog;
-
-            if (filtered.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="7" class="p-6 text-center text-gray-500 italic">No historical signals recorded on this date. Select another date within the 30-day window.</td>
-                    </tr>
-                `;
-                return;
-            }
-
-            filtered.forEach(row => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td class="p-3">${row.date} ${row.time}</td>
-                    <td class="p-3"><span class="px-2 py-0.5 rounded text-[10px] font-black ${row.type === 'BUY' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'}">${row.type}</span></td>
-                    <td class="p-3">$ ${row.entry.toFixed(2)}</td>
-                    <td class="p-3 text-red-400">$ ${row.sl.toFixed(2)}</td>
-                    <td class="p-3 text-emerald-400">$ ${row.tp.toFixed(2)}</td>
-                    <td class="p-3 font-bold ${row.win ? 'text-emerald-400' : 'text-red-400'}">${row.result}</td>
-                    <td class="p-3 text-[10px] text-gray-400 truncate max-w-xs">${row.rationale}</td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        function calculateLotSize() {
-            const equity = parseFloat(document.getElementById('calcEquity').value) || 1000;
-            const riskPct = parseFloat(document.getElementById('calcRiskPct').value) || 2;
-            const slPips = parseFloat(document.getElementById('calcSlPips').value) || 30;
-
-            const riskAmount = equity * (riskPct / 100);
-            const pipValuePerLot = 10; 
-            const lotSize = riskAmount / (slPips * pipValuePerLot);
-
-            document.getElementById('calcResultLot').innerText = `${lotSize.toFixed(2)} Lots`;
-            document.getElementById('calcResultRisk').innerText = `$ ${riskAmount.toFixed(2)}`;
-        }
-
-        function copySignalText(type, entry, sl, tp) {
-            const text = `⚡ XAUUSD SNIPER SIGNAL ⚡\nAction: ${type}\nEntry: $${entry}\nStop Loss: $${sl}\nTake Profit: $${tp}\n\nExecute on Exness: https://one.exnessonelink.com/a/m3alh1ljmu?source=app`;
-            navigator.clipboard.writeText(text).then(() => {
-                alert("Sniper signal metrics copied!");
-            });
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            initTradingViewChart();
-            loadSavedSignal(); // Loads saved signal state on reload
-            initPriceStream();
-            calculateLotSize();
-            populateHistoricalData();
-        });
+        // Initialize default view
+        updateDynamicContent(selectedDateStr);
     </script>
 </body>
 </html>
