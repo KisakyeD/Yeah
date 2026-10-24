@@ -1,608 +1,352 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VIP AI Football Predictions & Odd 400+ Tickets</title>
+    <title>AI Live Intelligence Stream</title>
     <style>
         :root {
-            --bg-primary: #0f172a;
-            --bg-secondary: #1e293b;
-            --bg-card: #1e293b;
-            --text-primary: #f8fafc;
-            --text-secondary: #94a3b8;
-            --accent: #38bdf8;
-            --accent-glow: rgba(56, 189, 248, 0.2);
-            --vip-gold: #f59e0b;
-            --btts-green: #10b981;
-            --border: #334155;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            --bg-color: #0b0f19;
+            --card-bg: #111827;
+            --text-primary: #f3f4f6;
+            --text-secondary: #9ca3af;
+            --accent: #3b82f6;
+            --accent-glow: rgba(59, 130, 246, 0.3);
+            --border: #1f2937;
+            --success: #10b981;
+            --success-glow: rgba(16, 185, 129, 0.3);
         }
 
-        [data-theme="light"] {
-            --bg-primary: #f1f5f9;
-            --bg-secondary: #ffffff;
-            --bg-card: #ffffff;
+        body.light-theme {
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
             --text-primary: #0f172a;
             --text-secondary: #64748b;
-            --accent: #0284c7;
-            --accent-glow: rgba(2, 132, 199, 0.15);
-            --vip-gold: #d97706;
-            --btts-green: #059669;
+            --accent: #2563eb;
+            --accent-glow: rgba(37, 99, 235, 0.2);
             --border: #e2e8f0;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            --success: #059669;
+            --success-glow: rgba(5, 150, 105, 0.2);
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            transition: background-color 0.3s ease, color 0.3s ease;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
         }
 
         body {
-            background-color: var(--bg-primary);
+            background-color: var(--bg-color);
             color: var(--text-primary);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-        }
-
-        /* Top Header */
-        header {
-            display: flex;
             align-items: center;
-            justify-content: space-between;
-            padding: 12px 20px;
-            background-color: var(--bg-secondary);
-            border-bottom: 1px solid var(--border);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .hamburger-btn {
-            background: none;
-            border: none;
-            color: var(--text-primary);
-            font-size: 24px;
-            cursor: pointer;
-            padding: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .logo {
-            font-size: 20px;
-            font-weight: 800;
-            letter-spacing: 0.5px;
-            background: linear-gradient(45deg, var(--vip-gold), var(--accent));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .theme-toggle-btn {
-            background: var(--bg-primary);
-            border: 1px solid var(--border);
-            color: var(--text-primary);
-            padding: 6px 12px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: 600;
-        }
-
-        /* Hamburger Drawer Menu */
-        .drawer {
-            position: fixed;
-            top: 0;
-            left: -280px;
-            width: 280px;
-            height: 100%;
-            background-color: var(--bg-secondary);
-            border-right: 1px solid var(--border);
-            z-index: 1000;
-            transition: left 0.3s ease;
-            display: flex;
-            flex-direction: column;
             padding: 20px;
-            box-shadow: 10px 0 25px rgba(0,0,0,0.5);
         }
 
-        .drawer.open {
-            left: 0;
-        }
-
-        .drawer-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .drawer-close {
-            background: none;
-            border: none;
-            color: var(--text-primary);
-            font-size: 22px;
-            cursor: pointer;
-        }
-
-        .drawer-menu-items {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .drawer-menu-items li a, .drawer-menu-items label {
-            color: var(--text-primary);
-            text-decoration: none;
-            font-size: 16px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-        }
-
-        .drawer-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
+        .container {
             width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 900;
-            display: none;
-        }
-
-        .drawer-overlay.active {
-            display: block;
-        }
-
-        /* Calendar Navigation Bar (-30 to +30 Days) */
-        .calendar-nav-container {
-            background-color: var(--bg-secondary);
-            border-bottom: 1px solid var(--border);
-            padding: 10px 0;
-            overflow-x: auto;
-            white-space: nowrap;
-            scrollbar-width: thin;
-        }
-
-        .calendar-strip {
-            display: inline-flex;
-            gap: 8px;
-            padding: 0 15px;
-        }
-
-        .cal-day-btn {
-            background-color: var(--bg-primary);
-            border: 1px solid var(--border);
-            color: var(--text-secondary);
-            padding: 8px 14px;
-            border-radius: 12px;
-            cursor: pointer;
-            text-align: center;
-            min-width: 70px;
-        }
-
-        .cal-day-btn .day-name {
-            font-size: 11px;
-            text-transform: uppercase;
-        }
-
-        .cal-day-btn .day-date {
-            font-size: 14px;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-
-        .cal-day-btn.active {
-            background-color: var(--accent);
-            border-color: var(--accent);
-            color: #ffffff;
-        }
-
-        .cal-day-btn.active .day-date, .cal-day-btn.active .day-name {
-            color: #ffffff;
-        }
-
-        /* Main Content Layout */
-        main {
-            flex: 1;
-            padding: 20px;
             max-width: 900px;
-            width: 100%;
-            margin: 0 auto;
             display: flex;
             flex-direction: column;
             gap: 20px;
         }
 
-        /* Section Tabs */
-        .section-tabs {
+        header {
             display: flex;
-            gap: 10px;
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 10px;
-        }
-
-        .tab-btn {
-            background: none;
-            border: none;
-            color: var(--text-secondary);
-            font-size: 15px;
-            font-weight: 700;
-            cursor: pointer;
-            padding: 8px 16px;
-            border-radius: 8px;
-        }
-
-        .tab-btn.active {
-            background-color: var(--accent-glow);
-            color: var(--accent);
-        }
-
-        .tab-content {
-            display: none;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .tab-content.active {
-            display: flex;
-        }
-
-        /* Ticket & Match Cards */
-        .card {
-            background-color: var(--bg-card);
+            justify-content: space-between;
+            align-items: center;
+            background: var(--card-bg);
             border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 18px;
-            box-shadow: var(--shadow);
-            position: relative;
-            overflow: hidden;
+            padding: 16px 24px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
 
-        .vip-ticket-card {
-            border: 2px solid var(--vip-gold);
-            background: linear-gradient(135deg, var(--bg-card) 0%, rgba(245, 158, 11, 0.05) 100%);
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
-        .badge {
-            position: absolute;
-            top: 12px;
-            right: 12px;
-            font-size: 11px;
-            font-weight: 800;
-            padding: 4px 10px;
-            border-radius: 6px;
-            text-transform: uppercase;
+        .pulse-dot {
+            width: 10px;
+            height: 10px;
+            background-color: var(--success);
+            border-radius: 50%;
+            box-shadow: 0 0 0 0 var(--success-glow);
+            animation: pulse 2s infinite;
         }
 
-        .badge-vip {
-            background-color: var(--vip-gold);
-            color: #000;
+        @keyframes pulse {
+            0% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 var(--success-glow);
+            }
+            70% {
+                transform: scale(1);
+                box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
+            }
+            100% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+            }
         }
 
-        .badge-btts {
-            background-color: var(--btts-green);
-            color: #fff;
-        }
-
-        .card-header {
-            font-size: 13px;
-            color: var(--text-secondary);
-            margin-bottom: 8px;
+        h1 {
+            font-size: 1.2rem;
             font-weight: 600;
+            letter-spacing: -0.025em;
         }
 
-        .match-teams {
-            font-size: 18px;
-            font-weight: 800;
-            margin-bottom: 12px;
-        }
-
-        .ticket-stats {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
+        .controls {
+            display: flex;
             gap: 10px;
-            margin: 15px 0;
-            background: var(--bg-primary);
-            padding: 12px;
-            border-radius: 10px;
-            text-align: center;
         }
 
-        .stat-item .label {
-            font-size: 11px;
-            color: var(--text-secondary);
+        button {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            padding: 8px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
-        .stat-item .value {
-            font-size: 15px;
-            font-weight: 800;
+        button:hover {
+            border-color: var(--accent);
             color: var(--accent);
         }
 
-        .ai-analysis-box {
-            background-color: var(--bg-primary);
-            border-left: 4px solid var(--accent);
-            padding: 12px;
-            border-radius: 0 8px 8px 0;
-            font-size: 13px;
-            color: var(--text-secondary);
-            margin-top: 10px;
-            line-height: 1.4;
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
         }
 
-        .ai-analysis-box strong {
-            color: var(--text-primary);
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-title {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .stream-box {
+            background: rgba(0, 0, 0, 0.03);
+            border: 1px dashed var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            min-height: 180px;
+            max-height: 250px;
+            overflow-y: auto;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        body.light-theme .stream-box {
+            background: rgba(0, 0, 0, 0.01);
+        }
+
+        .stream-line {
+            display: flex;
+            gap: 8px;
+            opacity: 0;
+            transform: translateY(4px);
+            animation: fadeIn 0.3s forwards;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .timestamp {
+            color: var(--text-secondary);
+            flex-shrink: 0;
+        }
+
+        .metric-display {
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: -0.05em;
+            color: var(--accent);
+        }
+
+        .metric-sub {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
         }
 
         footer {
+            margin-top: 10px;
             text-align: center;
-            padding: 15px;
-            font-size: 12px;
+            font-size: 0.8rem;
             color: var(--text-secondary);
-            border-top: 1px solid var(--border);
-            margin-top: auto;
+        }
+
+        footer a {
+            color: var(--accent);
+            text-decoration: none;
         }
     </style>
 </head>
 <body>
 
-    <!-- Header -->
-    <header>
-        <div class="header-left">
-            <button class="hamburger-btn" id="hamburgerBtn" aria-label="Open menu">☰</button>
-            <div class="logo">⚡ WINS1 VIP AI</div>
-        </div>
-        <button class="theme-toggle-btn" id="themeToggleBtn">☀️ Light Mode</button>
-    </header>
+    <div class="container">
+        <header>
+            <div class="logo-area">
+                <div class="pulse-dot"></div>
+                <h1>Invisible Neural Stream</h1>
+            </div>
+            <div class="controls">
+                <button id="themeToggle">
+                    <span id="themeIcon">☀️</span> Theme
+                </button>
+            </div>
+        </header>
 
-    <!-- Hamburger Sidebar Drawer -->
-    <div class="drawer-overlay" id="drawerOverlay"></div>
-    <nav class="drawer" id="drawer">
-        <div class="drawer-header">
-            <div class="logo" style="font-size: 18px;">Navigation Menu</div>
-            <button class="drawer-close" id="drawerClose">✕</button>
-        </div>
-        <ul class="drawer-menu-items">
-            <li><a href="#" onclick="switchTab('vip')">👑 Odd 400+ VIP Tickets</a></li>
-            <li><a href="#" onclick="switchTab('btts')">🎯 BTTS AI 100% Predictions</a></li>
-            <li><a href="#" onclick="switchTab('daily')">📅 Daily Fixtures & Calendar</a></li>
-            <hr style="border:0; border-top:1px solid var(--border); margin:5px 0;">
-            <li>
-                <label style="display:flex; align-items:center; justify-content:space-between; width:100%;">
-                    <span>🤖 BTTS Filter (AI Mode)</span>
-                    <input type="checkbox" id="drawerBttsToggle" checked onchange="toggleBttsFilter(this.checked)" style="width:18px; height:18px; cursor:pointer;">
-                </label>
-            </li>
-            <li><a href="https://one.exnessonelink.com/a/m3alh1ljmu?source=app" target="_blank">📈 Exness Partner Trading</a></li>
-        </ul>
-    </nav>
+        <div class="dashboard-grid">
+            <!-- Feed Card -->
+            <div class="card" style="grid-column: span 2;">
+                <div class="card-title">Live Autonomous Inference Stream</div>
+                <div class="stream-box" id="inferenceStream">
+                    <!-- Dynamic live entries injected here -->
+                </div>
+            </div>
 
-    <!-- Calendar Navigation Strip (-30 to +30 Days) -->
-    <div class="calendar-nav-container">
-        <div class="calendar-strip" id="calendarStrip"></div>
+            <!-- Metric Card 1 -->
+            <div class="card">
+                <div class="card-title">Token Velocity</div>
+                <div class="metric-display" id="tokenVelocity">0.0</div>
+                <div class="metric-sub">Processed tokens per second</div>
+            </div>
+
+            <!-- Metric Card 2 -->
+            <div class="card">
+                <div class="card-title">System Latency</div>
+                <div class="metric-display" id="systemLatency">0 ms</div>
+                <div class="metric-sub">Real-time roundtrip response time</div>
+            </div>
+        </div>
+
+        <footer>
+            Autonomous AI Interface Engine &bull; Sponsored via <a href="https://one.exnessonelink.com/a/m3alh1ljmu?source=app" target="_blank">Exness Partner Network</a>
+        </footer>
     </div>
 
-    <!-- Main Content Area -->
-    <main>
-        <!-- Section Tabs -->
-        <div class="section-tabs">
-            <button class="tab-btn active" onclick="switchTab('vip')">Odd 400+ VIP Ticket</button>
-            <button class="tab-btn" onclick="switchTab('btts')">BTTS AI 100%</button>
-            <button class="tab-btn" onclick="switchTab('daily')">Match Calendar</button>
-        </div>
-
-        <!-- Tab 1: Odd 400+ VIP Ticket -->
-        <div id="tab-vip" class="tab-content active">
-            <div class="card vip-ticket-card">
-                <span class="badge badge-vip">VIP Odd 458.50</span>
-                <div class="card-header">AI Master Combo Ticket • Target Date Selected</div>
-                <div class="match-teams">🚀 Mega Accumulator Slip</div>
-                <div class="ticket-stats">
-                    <div class="stat-item">
-                        <div class="label">Total Odds</div>
-                        <div class="value" style="color: var(--vip-gold);">458.50</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="label">AI Confidence</div>
-                        <div class="value">99.4%</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="label">Matches</div>
-                        <div class="value">6 Legs</div>
-                    </div>
-                </div>
-                <div id="vipMatchesList"></div>
-            </div>
-        </div>
-
-        <!-- Tab 2: BTTS AI 100% Predictions -->
-        <div id="tab-btts" class="tab-content">
-            <div style="font-size: 14px; color: var(--text-secondary); margin-bottom: 5px;">
-                Both Teams To Score (BTTS) AI mathematical probability model filtered for selected calendar date.
-            </div>
-            <div id="bttsMatchesList"></div>
-        </div>
-
-        <!-- Tab 3: Match Calendar View -->
-        <div id="tab-daily" class="tab-content">
-            <div class="card">
-                <div class="match-teams" style="font-size:16px;">📅 Active Date Schedule</div>
-                <p id="selectedDateDisplay" style="color: var(--accent); font-weight:700; margin-top:5px;"></p>
-                <div id="dailyMatchesList" style="margin-top: 15px; display:flex; flex-direction:column; gap:12px;"></div>
-            </div>
-        </div>
-    </main>
-
-    <footer>
-        © 2026 Wins1 Big Odds AI Prediction Engine. 18+ Gamble Responsibly. Partnered with Exness.
-    </footer>
-
     <script>
-        // Theme Toggle Logic
-        const themeToggleBtn = document.getElementById('themeToggleBtn');
-        const htmlElement = document.documentElement;
-
+        // Theme Toggle Setup
+        const themeToggleBtn = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+        
         themeToggleBtn.addEventListener('click', () => {
-            const currentTheme = htmlElement.getAttribute('data-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            htmlElement.setAttribute('data-theme', newTheme);
-            themeToggleBtn.textContent = newTheme === 'dark' ? '☀️ Light Mode' : '🌙 Dark Mode';
+            document.body.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            themeIcon.textContent = isLight ? '🌙' : '☀️';
         });
 
-        // Hamburger Menu Drawer Logic
-        const hamburgerBtn = document.getElementById('hamburgerBtn');
-        const drawer = document.getElementById('drawer');
-        const drawerOverlay = document.getElementById('drawerOverlay');
-        const drawerClose = document.getElementById('drawerClose');
+        // Completely Invisible AI Synthetic Logic Stream Generator
+        const streamContainer = document.getElementById('inferenceStream');
+        const tokenVelocityEl = document.getElementById('tokenVelocity');
+        const systemLatencyEl = document.getElementById('systemLatency');
 
-        function toggleDrawer() {
-            drawer.classList.toggle('open');
-            drawerOverlay.classList.toggle('active');
+        const aiContexts = [
+            "Parsing incoming multi-threaded data stream...",
+            "Executing background vector embedding alignment...",
+            "Optimizing weights across attention heads...",
+            "Synthesizing latent space representation...",
+            "Validating state consistency across distributed memory...",
+            "Performing heuristic anomaly scan...",
+            "Calibrating real-time predictive confidence scores...",
+            "Synchronizing background worker threads..."
+        ];
+
+        const hexCodes = ["0x4F7A", "0x9B12", "0xE341", "0x11A0", "0xFF88", "0x3C99", "0x7D22", "0x88EE"];
+
+        function getTimeString() {
+            const now = new Date();
+            return now.toTimeString().split(' ')[0] + '.' + String(now.getMilliseconds()).padStart(3, '0');
         }
 
-        hamburgerBtn.addEventListener('click', toggleDrawer);
-        drawerClose.addEventListener('click', toggleDrawer);
-        drawerOverlay.addEventListener('click', toggleDrawer);
-
-        // Tab Switching
-        function switchTab(tabName) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+        function appendStreamLine(text, highlight = false) {
+            const line = document.createElement('div');
+            line.className = 'stream-line';
             
-            document.getElementById('tab-' + tabName).classList.add('active');
-            if(tabName === 'vip') document.querySelectorAll('.tab-btn')[0].classList.add('active');
-            if(tabName === 'btts') document.querySelectorAll('.tab-btn')[1].classList.add('active');
-            if(tabName === 'daily') document.querySelectorAll('.tab-btn')[2].classList.add('active');
-
-            if(drawer.classList.contains('open')) toggleDrawer();
-        }
-
-        // Calendar Generator (-30 to +30 Days from Today)
-        const calendarStrip = document.getElementById('calendarStrip');
-        const today = new Date();
-        let selectedDateStr = formatDate(today);
-
-        function formatDate(date) {
-            return date.toISOString().split('T')[0];
-        }
-
-        for (let i = -30; i <= 30; i++) {
-            const d = new Date(today);
-            d.setDate(today.getDate() + i);
-            const dateStr = formatDate(d);
-
-            const btn = document.createElement('button');
-            btn.className = `cal-day-btn ${i === 0 ? 'active' : ''}`;
-            btn.dataset.date = dateStr;
-
-            const dayName = d.toLocaleDateString('en-US', { weekday: 'short' });
-            const dayDate = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-
-            btn.innerHTML = `<div class="day-name">${i === 0 ? 'Today' : dayName}</div><div class="day-date">${dayDate}</div>`;
+            const timeSpan = document.createElement('span');
+            timeSpan.className = 'timestamp';
+            timeSpan.textContent = `[${getTimeString()}]`;
             
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.cal-day-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                selectedDateStr = dateStr;
-                updateDynamicContent(selectedDateStr);
-            });
+            const textSpan = document.createElement('span');
+            textSpan.textContent = text;
+            if(highlight) {
+                textSpan.style.color = 'var(--accent)';
+                textSpan.style.fontWeight = '600';
+            }
 
-            calendarStrip.appendChild(btn);
+            line.appendChild(timeSpan);
+            line.appendChild(textSpan);
+            streamContainer.appendChild(line);
+
+            // Keep only latest 30 items for performance
+            if (streamContainer.children.length > 30) {
+                streamContainer.removeChild(streamContainer.firstChild);
+            }
+
+            streamContainer.scrollTop = streamContainer.scrollHeight;
         }
 
-        // Mock Dynamic Data Generator based on Selected Date & BTTS Filter
-        function updateDynamicContent(dateStr) {
-            document.getElementById('selectedDateDisplay').textContent = `Showing AI Predictions & Tickets for: ${dateStr}`;
+        // Live Dynamic Loop
+        setInterval(() => {
+            // Randomly choose context or telemetry log
+            if (Math.random() > 0.4) {
+                const randomMsg = aiContexts[Math.floor(Math.random() * aiContexts.length)];
+                appendStreamLine(randomMsg);
+            } else {
+                const code = hexCodes[Math.floor(Math.random() * hexCodes.length)];
+                const confidence = (Math.random() * (99.9 - 95.0) + 95.0).toFixed(2);
+                appendStreamLine(`Node State Check: ${code} | Confidence: ${confidence}%`, true);
+            }
 
-            // Render VIP Odd 400+ Matches
-            const vipContainer = document.getElementById('vipMatchesList');
-            vipContainer.innerHTML = `
-                <div style="display:flex; flex-direction:column; gap:12px; margin-top:10px;">
-                    <div class="card" style="padding:12px;">
-                        <div class="card-header">19:00 • EPL | Odds: 2.15</div>
-                        <div class="match-teams" style="font-size:15px;">Arsenal vs Chelsea</div>
-                        <div class="ai-analysis-box"><strong>AI Prediction:</strong> Over 2.5 Goals & BTTS (Confidence: 94.2%). Expected xG ratio: 2.14 vs 1.68.</div>
-                    </div>
-                    <div class="card" style="padding:12px;">
-                        <div class="card-header">21:00 • La Liga | Odds: 3.40</div>
-                        <div class="match-teams" style="font-size:15px;">Real Madrid vs Barcelona</div>
-                        <div class="ai-analysis-box"><strong>AI Prediction:</strong> HT/FT: Draw / Real Madrid (Confidence: 91.8%). Order flow odds movement indicates sharp money backing home side.</div>
-                    </div>
-                    <div class="card" style="padding:12px;">
-                        <div class="card-header">22:00 • Serie A | Odds: 2.85</div>
-                        <div class="match-teams" style="font-size:15px;">Inter Milan vs AC Milan</div>
-                        <div class="ai-analysis-box"><strong>AI Prediction:</strong> BTTS - Yes (Confidence: 96.5%). Both defenses missing key central defenders.</div>
-                    </div>
-                </div>
-            `;
+            // Update live metrics
+            const velocity = (Math.random() * (45 - 28) + 28).toFixed(1);
+            tokenVelocityEl.textContent = velocity + " t/s";
 
-            // Render BTTS AI Matches
-            const bttsContainer = document.getElementById('bttsMatchesList');
-            bttsContainer.innerHTML = `
-                <div class="card">
-                    <span class="badge badge-btts">BTTS 100% AI</span>
-                    <div class="card-header">20:30 • Bundesliga • ${dateStr}</div>
-                    <div class="match-teams">Bayern Munich vs RB Leipzig</div>
-                    <div class="ticket-stats">
-                        <div class="stat-item"><div class="label">BTTS Prob</div><div class="value">98.5%</div></div>
-                        <div class="stat-item"><div class="label">Odd</div><div class="value">1.65</div></div>
-                        <div class="stat-item"><div class="label">Form Index</div><div class="value">5/5</div></div>
-                    </div>
-                    <div class="ai-analysis-box"><strong>Neural Network Analysis:</strong> Combined home/away scoring rate stands at 3.8 goals per match. Defensive transition vulnerability detected on both flanks.</div>
-                </div>
-                <div class="card" style="margin-top:12px;">
-                    <span class="badge badge-btts">BTTS 100% AI</span>
-                    <div class="card-header">21:45 • Ligue 1 • ${dateStr}</div>
-                    <div class="match-teams">Marseille vs Monaco</div>
-                    <div class="ticket-stats">
-                        <div class="stat-item"><div class="label">BTTS Prob</div><div class="value">96.8%</div></div>
-                        <div class="stat-item"><div class="label">Odd</div><div class="value">1.78</div></div>
-                        <div class="stat-item"><div class="label">Form Index</div><div class="value">4/5</div></div>
-                    </div>
-                    <div class="ai-analysis-box"><strong>Neural Network Analysis:</strong> High pressing intensity metrics guarantee open spaces in defensive thirds. Both teams scored in last 6 Head-to-Head encounters.</div>
-                </div>
-            `;
+            const latency = Math.floor(Math.random() * (18 - 8) + 8);
+            systemLatencyEl.textContent = latency + " ms";
 
-            // Render Daily Schedule
-            const dailyContainer = document.getElementById('dailyMatchesList');
-            dailyContainer.innerHTML = `
-                <div style="padding:10px; background:var(--bg-primary); border-radius:8px; border:1px solid var(--border);">
-                    <div style="font-size:12px; color:var(--text-secondary);">17:30 • Premier League</div>
-                    <div style="font-weight:700; font-size:15px; margin:4px 0;">Manchester City vs Liverpool</div>
-                    <div style="font-size:13px; color:var(--accent);">AI Pick: Home Win & BTTS (Odds: 3.10)</div>
-                </div>
-                <div style="padding:10px; background:var(--bg-primary); border-radius:8px; border:1px solid var(--border);">
-                    <div style="font-size:12px; color:var(--text-secondary);">20:00 • Serie A</div>
-                    <div style="font-weight:700; font-size:15px; margin:4px 0;">Napoli vs Juventus</div>
-                    <div style="font-size:13px; color:var(--accent);">AI Pick: Under 2.5 Goals (Odds: 1.85)</div>
-                </div>
-            `;
-        }
-
-        function toggleBttsFilter(isChecked) {
-            console.log("BTTS AI Filter toggled:", isChecked);
-        }
-
-        // Initialize default view
-        updateDynamicContent(selectedDateStr);
+        }, 850);
     </script>
 </body>
 </html>
