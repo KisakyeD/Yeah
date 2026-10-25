@@ -111,7 +111,7 @@
                     <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span> <span id="sectionTitleDate">TODAY'S</span> VIP 100+ ACCUMULATOR
                 </h3>
                 <span class="text-xs bg-amber-500/10 text-amber-400 border border-amber-500/30 px-2.5 py-1 rounded font-mono font-bold" id="totalOddsBadge">
-                    TOTAL ODDS: 115.20
+                    TOTAL ODDS: 0.00
                 </span>
             </div>
 
@@ -307,11 +307,11 @@
             const container = document.getElementById('matchFeedContainer');
             if (!container) return;
             container.innerHTML = '';
-            let totalOdds = 1.0;
+            
+            // Dynamically calculate total odds by multiplying all match odds together
+            let totalOdds = matches.reduce((acc, m) => acc * m.odd, 1.0);
 
             matches.forEach(m => {
-                totalOdds *= m.odd;
-
                 let badge = "";
                 if (m.isUpcoming || m.status.includes("UPCOMING")) {
                     badge = `<span class="bg-amber-500/20 text-amber-400 border border-amber-500/30 text-[10px] font-black px-2 py-0.5 rounded">UPCOMING</span>`;
