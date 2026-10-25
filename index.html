@@ -53,7 +53,7 @@
             </nav>
         </div>
         <div class="pt-4 border-t border-gray-800 text-center">
-            <span class="text-[10px] text-gray-500 font-mono">Goal1 Engine &bull; AI Analysis Active</span>
+            <span class="text-[10px] text-gray-500 font-mono">Goal1 Engine &bull; Auto Live Polling</span>
         </div>
     </aside>
 
@@ -87,13 +87,18 @@
             <div class="flex items-center space-x-3">
                 <div class="p-3 bg-amber-500/10 rounded-xl border border-amber-500/20 text-amber-400 font-mono text-xs font-bold">AI SYNC</div>
                 <div>
-                    <h2 class="font-bold text-amber-300 text-sm">Goal1 Neural Match Engine & AI Feed</h2>
-                    <p class="text-xs text-gray-400">Real-time fixture analysis and probability calculations.</p>
+                    <h2 class="font-bold text-amber-300 text-sm">Goal1 Neural Match Engine & Live Auto-Refresh</h2>
+                    <p class="text-xs text-gray-400">Continuous 30-second live score and status polling active.</p>
                 </div>
             </div>
-            <button onclick="loadGoal1Data(selectedDateObj)" class="bg-amber-500 hover:bg-amber-400 text-gray-950 font-black px-4 py-2 rounded-xl text-xs transition shadow-md shadow-amber-500/20">
-                SYNC GOAL1
-            </button>
+            <div class="flex items-center gap-2">
+                <span id="autoRefreshCountdown" class="text-[11px] font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-3 py-1.5 rounded-xl font-bold flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 pulse-live"></span> AUTO: <span id="countdownSecs">30</span>s
+                </span>
+                <button onclick="manualRefresh()" class="bg-amber-500 hover:bg-amber-400 text-gray-950 font-black px-4 py-2 rounded-xl text-xs transition shadow-md shadow-amber-500/20">
+                    SYNC NOW
+                </button>
+            </div>
         </div>
 
         <!-- Date Ribbon (-30 to +30 Days) -->
@@ -147,6 +152,9 @@
         }
 
         let selectedDateObj = new Date();
+        let autoRefreshTimer = null;
+        let countdownTimer = null;
+        let secondsRemaining = 30;
 
         const globalTeams = [
             { league: "ENGLISH PREMIER LEAGUE", home: "Arsenal", away: "Chelsea" },
@@ -206,10 +214,11 @@
             });
         }
 
-        async function loadGoal1Data(dateObj) {
+        async function loadGoal1Data(dateObj, isSilentRefresh = false) {
             selectedDateObj = dateObj;
             const container = document.getElementById('matchFeedContainer');
-            if (container) {
+            
+            if (container && !isSilentRefresh) {
                 container.innerHTML = `<div class="p-8 text-center text-gray-400 text-xs font-mono">Running Goal1 AI analytics for ${dateObj.toLocaleDateString()}...</div>`;
             }
 
@@ -273,6 +282,7 @@
             }
 
             renderFeed(matches);
+            resetAutoRefreshCountdown();
         }
 
         function renderFeed(matches) {
@@ -333,6 +343,34 @@
             if (oddsBadge) oddsBadge.textContent = `TOTAL ODDS: ${totalOdds.toFixed(2)}`;
         }
 
+        function initAutoRefresh() {
+            if (autoRefreshTimer) clearInterval(autoRefreshTimer);
+            if (countdownTimer) clearInterval(countdownTimer);
+
+            secondsRemaining = 30;
+            
+            countdownTimer = setInterval(() => {
+                secondsRemaining--;
+                const elem = document.getElementById('countdownSecs');
+                if (elem) elem.textContent = secondsRemaining;
+
+                if (secondsRemaining <= 0) {
+                    secondsRemaining = 30;
+                    loadGoal1Data(selectedDateObj, true);
+                }
+            }, 1000);
+        }
+
+        function resetAutoRefreshCountdown() {
+            secondsRemaining = 30;
+            const elem = document.getElementById('countdownSecs');
+            if (elem) elem.textContent = secondsRemaining;
+        }
+
+        function manualRefresh() {
+            loadGoal1Data(selectedDateObj, false);
+        }
+
         function initRibbon() {
             const ribbon = document.getElementById('dateRibbon');
             if (!ribbon) return;
@@ -358,7 +396,7 @@
                     Array.from(ribbon.children).forEach(c => c.className = "px-4 py-2 rounded-lg text-gray-400 hover:bg-gray-800 text-xs whitespace-nowrap transition");
                     btn.className = "px-4 py-2 rounded-lg bg-amber-500 text-gray-950 font-bold text-xs whitespace-nowrap shadow-md shadow-amber-500/20";
                     document.getElementById('sectionTitleDate').textContent = i === 0 ? "TODAY'S" : label.toUpperCase();
-                    loadGoal1Data(target);
+                    loadGoal1Data(target, false);
                 };
 
                 ribbon.appendChild(btn);
@@ -379,7 +417,8 @@
 
         window.addEventListener('DOMContentLoaded', () => {
             initRibbon();
-            loadGoal1Data(new Date());
+            loadGoal1Data(new Date(), false);
+            initAutoRefresh();
         });
     </script>
 </body>
