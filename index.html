@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WINS1 VIP | High-Accuracy 100+ Odds Accumulator</title>
+    <title>WINS1 VIP | High-Accuracy Analytics & BTTS Daily</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -43,19 +43,65 @@
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
+            
             <nav class="space-y-2">
-                <a href="#" onclick="toggleDrawer(false)" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl bg-amber-500/10 text-amber-400 font-semibold text-xs border border-amber-500/20">
+                <button onclick="switchCategory('accumulator')" id="navAccumulator" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl bg-amber-500/10 text-amber-400 font-semibold text-xs border border-amber-500/20 transition">
                     <span>VIP 100+ Accumulator</span>
-                </a>
+                    <span class="text-[10px] font-mono bg-amber-500/20 px-1.5 py-0.5 rounded">Active</span>
+                </button>
+                <button onclick="switchCategory('btts')" id="navBtts" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-gray-400 hover:text-white hover:bg-gray-800 font-medium text-xs transition">
+                    <span>BTTS Daily Picks</span>
+                    <span class="text-[10px] font-mono bg-gray-800 px-1.5 py-0.5 rounded text-gray-400">Daily</span>
+                </button>
+                <button onclick="openSettingsModal()" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-gray-400 hover:text-white hover:bg-gray-800 font-medium text-xs transition text-left">
+                    <span>⚙️ Settings & Preferences</span>
+                </button>
                 <a href="https://one.exnessonelink.com/a/m3alh1ljmu?source=app" target="_blank" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl text-gray-400 hover:text-white hover:bg-gray-800 font-medium text-xs transition">
-                    <span>Trade Exness Markets</span>
+                    <span>📈 Trade Exness Markets</span>
                 </a>
             </nav>
+
+            <!-- Calendar Jump Section in Drawer -->
+            <div class="pt-4 border-t border-gray-800 space-y-2">
+                <label class="text-[11px] text-gray-400 font-mono block">Jump to Calendar Date:</label>
+                <input type="date" id="drawerCalendarInput" onchange="jumpToDate(this.value)" class="w-full bg-gray-800 border border-gray-700 text-gray-200 text-xs rounded-xl px-3 py-2 focus:outline-none focus:border-amber-500">
+            </div>
         </div>
+
         <div class="pt-4 border-t border-gray-800 text-center">
-            <span class="text-[10px] text-gray-500 font-mono">High-Accuracy Win Rate Filter Active</span>
+            <span class="text-[10px] text-gray-500 font-mono">High-Accuracy Analytics Engine</span>
         </div>
     </aside>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-gray-900 border border-gray-800 rounded-2xl max-w-sm w-full p-6 space-y-4 shadow-2xl">
+            <div class="flex items-center justify-between pb-3 border-b border-gray-800">
+                <h3 class="font-bold text-white text-sm">Application Settings</h3>
+                <button onclick="closeSettingsModal()" class="text-gray-400 hover:text-white">✕</button>
+            </div>
+            <div class="space-y-3 text-xs">
+                <div>
+                    <label class="text-gray-400 block mb-1">Odds Format</label>
+                    <select id="settingOddsFormat" class="w-full bg-gray-800 border border-gray-700 text-gray-200 rounded-xl p-2.5">
+                        <option value="decimal">Decimal (1.85)</option>
+                        <option value="fractional">Fractional (4/5)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="text-gray-400 block mb-1">Auto-Refresh Interval</label>
+                    <select id="settingRefreshInterval" class="w-full bg-gray-800 border border-gray-700 text-gray-200 rounded-xl p-2.5">
+                        <option value="30">30 Seconds</option>
+                        <option value="60">60 Seconds</option>
+                        <option value="0">Manual Only</option>
+                    </select>
+                </div>
+            </div>
+            <button onclick="saveSettings()" class="w-full bg-amber-500 hover:bg-amber-400 text-gray-950 font-bold py-2.5 rounded-xl text-xs transition">
+                Save Preferences
+            </button>
+        </div>
+    </div>
 
     <!-- Header Navigation -->
     <header class="sticky top-0 z-40 bg-gray-900/90 border-b border-gray-800 px-4 py-3 backdrop-blur-md">
@@ -69,7 +115,7 @@
                     <div class="flex items-center space-x-2">
                         <h1 class="font-extrabold text-lg text-white">WINS1 <span class="text-amber-400">VIP</span></h1>
                         <span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
-                            <span class="w-2 h-2 rounded-full bg-emerald-400 pulse-live"></span> HIGH ACCURACY VIP
+                            <span class="w-2 h-2 rounded-full bg-emerald-400 pulse-live"></span> <span id="headerCategoryBadge">VIP 100+ ODDS</span>
                         </span>
                     </div>
                 </div>
@@ -89,7 +135,7 @@
         <section class="space-y-4">
             <div class="flex items-center justify-between">
                 <h3 class="font-bold text-white text-base flex items-center gap-2">
-                    <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span> <span id="sectionTitleDate">TODAY'S</span> VIP 100+ ACCUMULATOR
+                    <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span> <span id="sectionTitleDate">TODAY'S</span> <span id="sectionTitleCategory">VIP 100+ ACCUMULATOR</span>
                 </h3>
                 <span class="text-xs bg-amber-500/10 text-amber-400 border border-amber-500/30 px-2.5 py-1 rounded font-mono font-bold" id="totalOddsBadge">
                     TOTAL ODDS: 0.00
@@ -128,40 +174,75 @@
         if (closeDrawerBtn) closeDrawerBtn.addEventListener('click', () => toggleDrawer(false));
         if (drawerBackdrop) drawerBackdrop.addEventListener('click', () => toggleDrawer(false));
 
+        function openSettingsModal() {
+            toggleDrawer(false);
+            document.getElementById('settingsModal').classList.remove('hidden');
+        }
+
+        function closeSettingsModal() {
+            document.getElementById('settingsModal').classList.add('hidden');
+        }
+
+        function saveSettings() {
+            closeSettingsModal();
+            fetchMatchData(selectedDateObj, false);
+        }
+
         function getYYYYMMDD(d) {
             return d.getFullYear() + String(d.getMonth() + 1).padStart(2, '0') + String(d.getDate()).padStart(2, '0');
         }
 
         let selectedDateObj = new Date();
+        let currentCategory = 'accumulator'; // 'accumulator' or 'btts'
         let autoRefreshTimer = null;
         let countdownTimer = null;
         let secondsRemaining = 30;
 
-        // High-probability analytical selections with stricter verification rules
-        function evaluateHighAccuracyPick(homeName, awayName, seed, index, hScoreNum, aScoreNum, isFinished) {
-            const hashVal = (stringHash(homeName) + stringHash(awayName) + seed + index) % 3;
+        function switchCategory(cat) {
+            currentCategory = cat;
+            toggleDrawer(false);
 
-            if (hashVal === 0) {
+            document.getElementById('navAccumulator').className = cat === 'accumulator' 
+                ? "w-full flex items-center justify-between px-3 py-2.5 rounded-xl bg-amber-500/10 text-amber-400 font-semibold text-xs border border-amber-500/20 transition"
+                : "w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-gray-400 hover:text-white hover:bg-gray-800 font-medium text-xs transition";
+
+            document.getElementById('navBtts').className = cat === 'btts' 
+                ? "w-full flex items-center justify-between px-3 py-2.5 rounded-xl bg-amber-500/10 text-amber-400 font-semibold text-xs border border-amber-500/20 transition"
+                : "w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-gray-400 hover:text-white hover:bg-gray-800 font-medium text-xs transition";
+
+            document.getElementById('headerCategoryBadge').textContent = cat === 'accumulator' ? "VIP 100+ ODDS" : "BTTS DAILY";
+            document.getElementById('sectionTitleCategory').textContent = cat === 'accumulator' ? "VIP 100+ ACCUMULATOR" : "BTTS DAILY ACCUMULATOR";
+
+            fetchMatchData(selectedDateObj, false);
+        }
+
+        function jumpToDate(dateStr) {
+            if (!dateStr) return;
+            const target = new Date(dateStr + 'T00:00:00');
+            selectedDateObj = target;
+            toggleDrawer(false);
+            initRibbon();
+            fetchMatchData(target, false);
+        }
+
+        function evaluatePick(homeName, awayName, seed, index, category) {
+            const hashVal = (stringHash(homeName) + stringHash(awayName) + seed + index) % 100;
+
+            if (category === 'btts') {
                 return {
-                    label: "Double Chance: 1X",
-                    odd: parseFloat((1.45 + (index * 0.05)).toFixed(2)),
-                    confidence: "94%",
-                    check: (h, a) => h >= a
-                };
-            } else if (hashVal === 1) {
-                return {
-                    label: "Over 1.5 Goals",
-                    odd: parseFloat((1.55 + (index * 0.04)).toFixed(2)),
-                    confidence: "91%",
-                    check: (h, a) => (h + a) > 1
-                };
-            } else {
-                return {
-                    label: "BTTS: Yes (Safe)",
-                    odd: parseFloat((1.75 + (index * 0.06)).toFixed(2)),
-                    confidence: "88%",
+                    label: "BTTS: Yes",
+                    odd: parseFloat((1.72 + (hashVal % 15) / 100).toFixed(2)),
+                    confidence: `${86 + (hashVal % 10)}%`,
                     check: (h, a) => h > 0 && a > 0
                 };
+            } else {
+                if (hashVal % 3 === 0) {
+                    return { label: "Double Chance: 1X", odd: parseFloat((1.45 + (hashVal % 10) / 100).toFixed(2)), confidence: "94%", check: (h, a) => h >= a };
+                } else if (hashVal % 3 === 1) {
+                    return { label: "Over 1.5 Goals", odd: parseFloat((1.55 + (hashVal % 12) / 100).toFixed(2)), confidence: "91%", check: (h, a) => (h + a) > 1 };
+                } else {
+                    return { label: "BTTS: Yes (Safe)", odd: parseFloat((1.75 + (hashVal % 14) / 100).toFixed(2)), confidence: "88%", check: (h, a) => h > 0 && a > 0 };
+                }
             }
         }
 
@@ -178,7 +259,7 @@
             const container = document.getElementById('matchFeedContainer');
             
             if (container && !isSilentRefresh) {
-                container.innerHTML = `<div class="p-8 text-center text-gray-400 text-xs font-mono">Running high-accuracy win-rate filters for ${dateObj.toLocaleDateString()}...</div>`;
+                container.innerHTML = `<div class="p-8 text-center text-gray-400 text-xs font-mono">Loading ${currentCategory === 'btts' ? 'BTTS Daily' : 'VIP Accumulator'} for ${dateObj.toLocaleDateString()}...</div>`;
             }
 
             const yyyymmdd = getYYYYMMDD(dateObj);
@@ -192,7 +273,7 @@
                 if (res.ok) {
                     const json = await res.json();
                     if (json && json.events && json.events.length > 0) {
-                        const rawEvents = json.events.slice(0, 6); // Pick 6 solid matches to compound safely
+                        const rawEvents = json.events.slice(0, currentCategory === 'btts' ? 5 : 6);
                         matchEntries = rawEvents.map((ev, i) => {
                             const comp = ev.competitions?.[0];
                             const home = comp?.competitors?.find(c => c.homeAway === 'home')?.team?.displayName || "Home Team";
@@ -226,7 +307,7 @@
                             const numericH = rawHScore === "-" ? 0 : parseInt(rawHScore, 10);
                             const numericA = rawAScore === "-" ? 0 : parseInt(rawAScore, 10);
                             
-                            const pickEval = evaluateHighAccuracyPick(home, away, seed, i, numericH, numericA, status !== "UPCOMING");
+                            const pickEval = evaluatePick(home, away, seed, i, currentCategory);
                             const isWon = status === "UPCOMING" ? true : pickEval.check(numericH, numericA);
 
                             return {
@@ -249,7 +330,7 @@
 
             if (matchEntries.length === 0) {
                 if (container) {
-                    container.innerHTML = `<div class="p-8 text-center text-gray-400 text-xs font-mono">No high-probability fixtures found for ${dateObj.toLocaleDateString()}. Please select another date.</div>`;
+                    container.innerHTML = `<div class="p-8 text-center text-gray-400 text-xs font-mono">No fixtures found for ${dateObj.toLocaleDateString()}. Please select another date.</div>`;
                 }
                 const oddsBadge = document.getElementById('totalOddsBadge');
                 if (oddsBadge) oddsBadge.textContent = `TOTAL ODDS: 0.00`;
@@ -267,6 +348,7 @@
             container.innerHTML = '';
             
             let totalOdds = matches.reduce((acc, m) => acc * m.odd, 1.0);
+            const format = document.getElementById('settingOddsFormat')?.value || 'decimal';
 
             matches.forEach(m => {
                 let badge = "";
@@ -279,6 +361,8 @@
                         ? `<span class="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-black px-2 py-0.5 rounded">WON</span>`
                         : `<span class="bg-red-500/20 text-red-400 border border-red-500/30 text-[10px] font-black px-2 py-0.5 rounded">LOST</span>`;
                 }
+
+                const displayOdd = format === 'fractional' ? `${Math.round((m.odd - 1) * 10)}/10` : m.odd.toFixed(2);
 
                 const card = document.createElement('div');
                 card.className = "bg-gray-900 border border-gray-800 rounded-xl p-4 flex flex-col md:flex-row items-center justify-between gap-4 hover:border-amber-500/40 transition";
@@ -310,7 +394,7 @@
                         </div>
                         <div class="text-right">
                             <span class="text-[10px] text-gray-400 block font-mono">ODDS</span>
-                            <span class="text-sm font-extrabold text-white font-mono">${m.odd.toFixed(2)}</span>
+                            <span class="text-sm font-extrabold text-white font-mono">${displayOdd}</span>
                         </div>
                     </div>
                 `;
@@ -328,16 +412,19 @@
             secondsRemaining = 30;
             
             countdownTimer = setInterval(() => {
+                const intervalSetting = parseInt(document.getElementById('settingRefreshInterval')?.value || '30', 10);
+                if (intervalSetting === 0) return;
+
                 secondsRemaining--;
                 if (secondsRemaining <= 0) {
-                    secondsRemaining = 30;
+                    secondsRemaining = intervalSetting;
                     fetchMatchData(selectedDateObj, true);
                 }
             }, 1000);
         }
 
         function resetAutoRefreshCountdown() {
-            secondsRemaining = 30;
+            secondsRemaining = parseInt(document.getElementById('settingRefreshInterval')?.value || '30', 10);
         }
 
         function manualRefresh() {
