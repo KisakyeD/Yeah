@@ -73,7 +73,6 @@
     <header class="sticky top-0 z-40 bg-gray-900/90 dark:bg-gray-900/90 border-b border-gray-800 px-4 py-3 backdrop-blur-md">
         <div class="max-w-4xl mx-auto flex items-center justify-between">
             <div class="flex items-center space-x-3">
-                <!-- Top Left Hamburger Menu Button -->
                 <button id="openDrawerBtn" aria-label="Open Navigation Menu" class="p-2 rounded-lg bg-gray-800 border border-gray-700 text-gray-300 hover:text-white transition">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                 </button>
@@ -91,7 +90,6 @@
                 </div>
             </div>
 
-            <!-- Theme Switcher Button -->
             <button id="themeToggleBtn" aria-label="Toggle Theme" class="p-2 rounded-lg bg-gray-800 border border-gray-700 text-gray-300 hover:text-white transition">
                 <span id="themeIcon">☀️</span>
             </button>
@@ -108,7 +106,7 @@
                 </div>
                 <div>
                     <h2 class="font-bold text-amber-300 text-sm">Real-Time Goal1 Match & Prediction Feed</h2>
-                    <p class="text-xs text-gray-400">Continuous ESPN endpoint synchronization with 400+ odds accumulators.</p>
+                    <p class="text-xs text-gray-400">Continuous ESPN endpoint synchronization with live scores.</p>
                 </div>
             </div>
             <button onclick="fetchEspnLiveMatches(selectedDateFormatted)" class="bg-amber-500 hover:bg-amber-400 text-gray-950 font-black px-4 py-2 rounded-xl text-xs transition shadow-md shadow-amber-500/20">
@@ -137,7 +135,7 @@
             </div>
         </section>
 
-        <!-- Ticket History Ledger Section (Win / Loss Filterable) -->
+        <!-- Ticket History Ledger Section -->
         <section class="space-y-4 pt-4 border-t border-gray-800" id="historyContainerSection">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
@@ -145,7 +143,6 @@
                     <p class="text-xs text-gray-400">Itemized settlement audit trail with Win/Loss verification</p>
                 </div>
                 
-                <!-- Win/Loss Filters -->
                 <div class="flex items-center space-x-1 bg-gray-900 border border-gray-800 p-1 rounded-lg self-start sm:self-auto" id="historyFilterTabs">
                     <button onclick="filterHistory('ALL')" id="filterAll" class="px-3 py-1 rounded-md text-xs font-bold bg-amber-500 text-gray-950 transition">ALL (10)</button>
                     <button onclick="filterHistory('WON')" id="filterWon" class="px-3 py-1 rounded-md text-xs font-medium text-emerald-400 hover:bg-gray-800 transition">WON (8)</button>
@@ -153,7 +150,6 @@
                 </div>
             </div>
 
-            <!-- Ledger Analytics Bar -->
             <div class="grid grid-cols-3 gap-3 bg-gray-900/60 border border-gray-800 rounded-xl p-3 text-center">
                 <div>
                     <span class="text-[10px] text-gray-400 uppercase block font-mono">Total Tickets</span>
@@ -183,7 +179,6 @@
     </footer>
 
     <script>
-        // Drawer Menu Control
         const openDrawerBtn = document.getElementById('openDrawerBtn');
         const closeDrawerBtn = document.getElementById('closeDrawerBtn');
         const drawerMenu = document.getElementById('drawerMenu');
@@ -205,7 +200,6 @@
         closeDrawerBtn.addEventListener('click', () => toggleDrawer(false));
         drawerBackdrop.addEventListener('click', () => toggleDrawer(false));
 
-        // Format Date to YYYYMMDD for ESPN API
         function formatDateToYYYYMMDD(dateObj) {
             const year = dateObj.getFullYear();
             const month = String(dateObj.getMonth() + 1).padStart(2, '0');
@@ -216,7 +210,6 @@
         let selectedDateFormatted = formatDateToYYYYMMDD(new Date());
         let activeMatches = [];
 
-        // Pool of prediction types and odds with explicit win/loss states
         const predictionPool = [
             { pick: "HT/FT: Home/Home & 3-1", odd: 14.50, result: "WON" },
             { pick: "HT/FT: Draw/Home", odd: 5.80, result: "WON" },
@@ -227,8 +220,51 @@
             { pick: "Home Win & Over 3.5 Goals", odd: 6.50, result: "WON" }
         ];
 
-        // Seeded generator ensuring fully functional dynamic data per date click
-        function getMatchesForDate(dateStr) {
+        // Fetch Live Matches from ESPN Public API with real scores parsing
+        async function fetchEspnLiveMatches(dateYYYYMMDD) {
+            selectedDateFormatted = dateYYYYMMDD;
+            const container = document.getElementById('matchFeedContainer');
+            container.innerHTML = `<div class="p-8 text-center text-gray-400 text-xs font-mono">Syncing live scores from ESPN API...</div>`;
+
+            const espnUrl = `https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard?dates=${dateYYYYMMDD}`;
+
+            try {
+                const response = await fetch(espnUrl);
+                if (!response.ok) throw new Error("ESPN API fetch failed");
+                const data = await response.json();
+
+                if (data && data.events && data.events.length > 0) {
+                    activeMatches = data.events.slice(0, 3).map((event, idx) => {
+                        const competition = event.competitions[0];
+                        const homeCompetitor = competition.competitors.find(c => c.homeAway === 'home');
+                        const awayCompetitor = competition.competitors.find(c => c.homeAway === 'away');
+                        const pred = predictionPool[idx % predictionPool.length];
+
+                        return {
+                            league: event.season?.slug ? event.season.slug.toUpperCase() : "ENGLISH PREMIER LEAGUE",
+                            time: event.status?.type?.shortDetail || "20:00",
+                            home: homeCompetitor?.team?.shortDisplayName || "Home Team",
+                            away: awayCompetitor?.team?.shortDisplayName || "Away Team",
+                            homeScore: homeCompetitor?.score !== undefined ? homeCompetitor.score : "0",
+                            awayScore: awayCompetitor?.score !== undefined ? awayCompetitor.score : "0",
+                            status: event.status?.type?.detail || "SCHEDULED",
+                            pick: pred.pick,
+                            odd: pred.odd,
+                            matchResult: pred.result
+                        };
+                    });
+                } else {
+                    activeMatches = getFallbackMatchesForDate(dateYYYYMMDD);
+                }
+            } catch (err) {
+                console.warn("ESPN Scoreboard query fallback engaged:", err);
+                activeMatches = getFallbackMatchesForDate(dateYYYYMMDD);
+            }
+
+            renderTodayTicket();
+        }
+
+        function getFallbackMatchesForDate(dateStr) {
             const seed = dateStr.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
             const teamsList = [
                 ["Real Madrid", "Borussia Dortmund"],
@@ -265,51 +301,6 @@
             return matches;
         }
 
-        // Fetch Live Matches from ESPN Public API with Fallback Handling
-        async function fetchEspnLiveMatches(dateYYYYMMDD) {
-            selectedDateFormatted = dateYYYYMMDD;
-            const container = document.getElementById('matchFeedContainer');
-            container.innerHTML = `<div class="p-8 text-center text-gray-400 text-xs font-mono">Syncing ESPN API for date ${dateYYYYMMDD}...</div>`;
-
-            const espnUrl = `https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard?dates=${dateYYYYMMDD}`;
-
-            try {
-                const response = await fetch(espnUrl);
-                if (!response.ok) throw new Error("ESPN API fetch failed");
-                const data = await response.json();
-
-                if (data && data.events && data.events.length > 0) {
-                    activeMatches = data.events.slice(0, 3).map((event, idx) => {
-                        const competition = event.competitions[0];
-                        const homeCompetitor = competition.competitors.find(c => c.homeAway === 'home');
-                        const awayCompetitor = competition.competitors.find(c => c.homeAway === 'away');
-                        const pred = predictionPool[idx % predictionPool.length];
-
-                        return {
-                            league: event.season?.slug ? event.season.slug.toUpperCase() : "ENGLISH PREMIER LEAGUE",
-                            time: event.status?.type?.shortDetail || "20:00",
-                            home: homeCompetitor?.team?.shortDisplayName || "Home Team",
-                            away: awayCompetitor?.team?.shortDisplayName || "Away Team",
-                            homeScore: homeCompetitor?.score || "0",
-                            awayScore: awayCompetitor?.score || "0",
-                            status: event.status?.type?.detail || "SCHEDULED",
-                            pick: pred.pick,
-                            odd: pred.odd,
-                            matchResult: pred.result
-                        };
-                    });
-                } else {
-                    activeMatches = getMatchesForDate(dateYYYYMMDD);
-                }
-            } catch (err) {
-                console.warn("ESPN Scoreboard query fallback engaged:", err);
-                activeMatches = getMatchesForDate(dateYYYYMMDD);
-            }
-
-            renderTodayTicket();
-        }
-
-        // Settled Ticket History Ledger with Win/Loss tracking
         const ticketHistoryDatabase = [
             { id: "TICK-9904", date: "24 Oct 2026", totalOdds: 412.85, status: "WON", legs: [
                 { fixture: "Real Madrid vs Borussia Dortmund", pick: "HT/FT: Home/Home & 3-1", odd: 14.50, ft: "3-1", res: "WON" },
@@ -365,7 +356,6 @@
 
         let currentHistoryFilter = 'ALL';
 
-        // Render Active Matches Card with Win/Loss outcome badges
         function renderTodayTicket() {
             const container = document.getElementById('matchFeedContainer');
             container.innerHTML = '';
@@ -415,7 +405,6 @@
             document.getElementById('totalOddsBadge').textContent = `TOTAL ODDS: ${cumulativeOdds.toFixed(2)}`;
         }
 
-        // Render History Ledger
         function renderHistoryLedger() {
             const historyContainer = document.getElementById('historyContainer');
             
@@ -496,7 +485,6 @@
             renderHistoryLedger();
         }
 
-        // Initialize -30 to +30 Date Navigation Ribbon with Active Click Handlers
         function initCalendar() {
             const ribbon = document.getElementById('dateRibbon');
             const today = new Date();
@@ -530,7 +518,6 @@
                 ribbon.appendChild(btn);
             }
 
-            // Auto-scroll calendar ribbon to today's date on load
             if (todayBtn) {
                 setTimeout(() => {
                     todayBtn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
@@ -538,7 +525,6 @@
             }
         }
 
-        // Theme Toggle Handler
         document.getElementById('themeToggleBtn').addEventListener('click', () => {
             const html = document.documentElement;
             const themeIcon = document.getElementById('themeIcon');
@@ -551,7 +537,6 @@
             }
         });
 
-        // App Entry Point
         window.addEventListener('DOMContentLoaded', () => {
             initCalendar();
             fetchEspnLiveMatches(selectedDateFormatted);
