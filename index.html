@@ -178,7 +178,7 @@
                 let aScore = (seed + idx) % 3;
 
                 if (dayDiff > 0) {
-                    status = `${15 + (idx * 2)}:00`;
+                    status = "UPCOMING";
                     hScore = "-";
                     aScore = "-";
                 } else if (dayDiff === 0) {
@@ -237,7 +237,7 @@
                             let status = ev.status?.type?.detail || "FT";
 
                             if (state === "pre") {
-                                status = ev.status?.type?.shortDetail || "UPCOMING";
+                                status = "UPCOMING";
                                 hScore = "-";
                                 aScore = "-";
                             } else if (state === "in") {
@@ -285,7 +285,7 @@
                 totalOdds *= m.odd;
 
                 let badge = "";
-                if (m.isUpcoming || m.status.includes(":")) {
+                if (m.isUpcoming || m.status.includes("UPCOMING")) {
                     badge = `<span class="bg-amber-500/20 text-amber-400 border border-amber-500/30 text-[10px] font-black px-2 py-0.5 rounded">UPCOMING</span>`;
                 } else if (m.status.includes("LIVE")) {
                     badge = `<span class="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-black px-2 py-0.5 rounded animate-pulse">LIVE</span>`;
@@ -302,7 +302,7 @@
                         <div class="flex items-center space-x-2 text-xs text-gray-400">
                             <span class="text-amber-400 font-semibold">${m.league}</span>
                             <span>•</span>
-                            <span class="${m.status.includes('LIVE') ? 'text-emerald-400 font-bold' : 'text-gray-400'}">${m.status}</span>
+                            <span class="${m.status.includes('LIVE') ? 'text-emerald-400 font-bold animate-pulse' : 'text-gray-400'}">${m.status}</span>
                         </div>
                         <div class="text-sm font-bold text-white flex items-center space-x-3">
                             <span>${m.home}</span>
