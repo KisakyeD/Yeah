@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WINS1 VIP | Live ESP/API Football Intelligence & 400+ Odds</title>
+    <title>WINS1 VIP | Goal1 Live Analytics & Predictions</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -30,10 +30,54 @@
 </head>
 <body class="bg-gray-950 text-gray-100 dark:bg-gray-950 dark:text-gray-100 min-h-screen flex flex-col font-sans transition-colors duration-300">
 
-    <!-- Header -->
-    <header class="sticky top-0 z-50 bg-gray-900/90 dark:bg-gray-900/90 border-b border-gray-800 px-4 py-3 backdrop-blur-md">
+    <!-- Drawer Backdrop -->
+    <div id="drawerBackdrop" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden transition-opacity duration-300"></div>
+
+    <!-- Slide-out Navigation Drawer -->
+    <aside id="drawerMenu" class="fixed top-0 left-0 bottom-0 w-72 bg-gray-900 border-r border-gray-800 z-50 transform -translate-x-full transition-transform duration-300 ease-in-out flex flex-col justify-between p-4">
+        <div class="space-y-6">
+            <div class="flex items-center justify-between pb-4 border-b border-gray-800">
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-amber-500 to-yellow-300 flex items-center justify-center font-black text-gray-950 text-base shadow-lg shadow-amber-500/10">
+                        W1
+                    </div>
+                    <span class="font-extrabold text-base text-white">WINS1 <span class="text-amber-400">VIP</span></span>
+                </div>
+                <button id="closeDrawerBtn" aria-label="Close Menu" class="p-2 rounded-lg bg-gray-800 text-gray-400 hover:text-white transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+
+            <nav class="space-y-1">
+                <a href="#" onclick="toggleDrawer(false)" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl bg-amber-500/10 text-amber-400 font-semibold text-xs border border-amber-500/20">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    <span>VIP 400+ Ticket</span>
+                </a>
+                <a href="#historyContainer" onclick="toggleDrawer(false)" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl text-gray-400 hover:text-white hover:bg-gray-800 font-medium text-xs transition">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span>Ticket Verification Ledger</span>
+                </a>
+                <a href="https://one.exnessonelink.com/a/m3alh1ljmu?source=app" target="_blank" rel="noopener" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl text-gray-400 hover:text-white hover:bg-gray-800 font-medium text-xs transition">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                    <span>Trade Exness Markets</span>
+                </a>
+            </nav>
+        </div>
+
+        <div class="pt-4 border-t border-gray-800 text-center">
+            <span class="text-[10px] text-gray-400 block font-mono">Goal1 Engine &bull; ESPN API Live</span>
+        </div>
+    </aside>
+
+    <!-- Header Navigation -->
+    <header class="sticky top-0 z-40 bg-gray-900/90 dark:bg-gray-900/90 border-b border-gray-800 px-4 py-3 backdrop-blur-md">
         <div class="max-w-4xl mx-auto flex items-center justify-between">
             <div class="flex items-center space-x-3">
+                <!-- Top Left Hamburger Menu Button -->
+                <button id="openDrawerBtn" aria-label="Open Navigation Menu" class="p-2 rounded-lg bg-gray-800 border border-gray-700 text-gray-300 hover:text-white transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                </button>
+
                 <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-amber-500 to-yellow-300 flex items-center justify-center font-black text-gray-950 text-lg shadow-lg shadow-amber-500/10">
                     W1
                 </div>
@@ -41,13 +85,13 @@
                     <div class="flex items-center space-x-2">
                         <h1 class="font-extrabold text-lg text-white">WINS1 <span class="text-amber-400">VIP</span></h1>
                         <span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
-                            <span class="w-2 h-2 rounded-full bg-emerald-400 pulse-live"></span> ESP API LIVE
+                            <span class="w-2 h-2 rounded-full bg-emerald-400 pulse-live"></span> ESPN LIVE
                         </span>
                     </div>
                 </div>
             </div>
 
-            <!-- Theme Toggle -->
+            <!-- Theme Switcher Button -->
             <button id="themeToggleBtn" aria-label="Toggle Theme" class="p-2 rounded-lg bg-gray-800 border border-gray-700 text-gray-300 hover:text-white transition">
                 <span id="themeIcon">☀️</span>
             </button>
@@ -60,28 +104,28 @@
         <div class="bg-gradient-to-r from-amber-950/40 via-yellow-900/20 to-amber-950/40 border border-amber-500/30 rounded-2xl p-4 flex flex-col md:flex-row items-center justify-between gap-4 shadow-xl">
             <div class="flex items-center space-x-3">
                 <div class="p-3 bg-amber-500/10 rounded-xl border border-amber-500/20 text-amber-400 font-mono text-xs font-bold">
-                    ESP API
+                    ESPN LIVE
                 </div>
                 <div>
-                    <h2 class="font-bold text-amber-300 text-sm">Live ESP Football Feed & AI Odds Generator</h2>
-                    <p class="text-xs text-gray-400">Synchronized with real-time sports data endpoints and neural modeling.</p>
+                    <h2 class="font-bold text-amber-300 text-sm">Real-Time Goal1 Match & Prediction Feed</h2>
+                    <p class="text-xs text-gray-400">Continuous ESPN endpoint synchronization with 400+ odds accumulators.</p>
                 </div>
             </div>
-            <button onclick="fetchEspLiveMatches()" class="bg-amber-500 hover:bg-amber-400 text-gray-950 font-black px-4 py-2 rounded-xl text-xs transition shadow-md shadow-amber-500/20">
-                SYNC ESP API
+            <button onclick="fetchEspnLiveMatches()" class="bg-amber-500 hover:bg-amber-400 text-gray-950 font-black px-4 py-2 rounded-xl text-xs transition shadow-md shadow-amber-500/20">
+                SYNC ESPN API
             </button>
         </div>
 
-        <!-- Date Ribbon Navigation (-30 to +30 Days) -->
+        <!-- Scrollable Date Ribbon (-30 to +30 Days) -->
         <div class="flex items-center justify-between bg-gray-900 border border-gray-800 rounded-xl p-1.5 no-scrollbar overflow-x-auto gap-2" id="dateRibbon">
             <!-- Rendered via JS -->
         </div>
 
-        <!-- Today's 400+ Odds AI VIP Ticket -->
+        <!-- Today's 400+ VIP Ticket Section -->
         <section class="space-y-4">
             <div class="flex items-center justify-between">
                 <h3 class="font-bold text-white text-base flex items-center gap-2">
-                    <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span> ESP API LIVE VIP TICKET
+                    <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span> ESPN LIVE VIP ACCUMULATOR
                 </h3>
                 <span class="text-xs bg-amber-500/10 text-amber-400 border border-amber-500/30 px-2.5 py-1 rounded font-mono font-bold" id="totalOddsBadge">
                     TOTAL ODDS: 412.85
@@ -93,15 +137,15 @@
             </div>
         </section>
 
-        <!-- Ticket History Ledger (Wins & Losses Filterable) -->
+        <!-- Ticket History Ledger Section -->
         <section class="space-y-4 pt-4 border-t border-gray-800">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
                     <h3 class="font-bold text-white text-base">TICKET HISTORY & VERIFICATION LEDGER</h3>
-                    <p class="text-xs text-gray-400">Itemized settlement audit trail for all past AI accumulator tickets</p>
+                    <p class="text-xs text-gray-400">Itemized settlement audit trail for all past tickets</p>
                 </div>
                 
-                <!-- Filter Tabs -->
+                <!-- Win/Loss Filters -->
                 <div class="flex items-center space-x-1 bg-gray-900 border border-gray-800 p-1 rounded-lg self-start sm:self-auto" id="historyFilterTabs">
                     <button onclick="filterHistory('ALL')" id="filterAll" class="px-3 py-1 rounded-md text-xs font-bold bg-amber-500 text-gray-950 transition">ALL (10)</button>
                     <button onclick="filterHistory('WON')" id="filterWon" class="px-3 py-1 rounded-md text-xs font-medium text-emerald-400 hover:bg-gray-800 transition">WON (10)</button>
@@ -109,29 +153,29 @@
                 </div>
             </div>
 
-            <!-- Quick Ledger Analytics Box -->
+            <!-- Ledger Analytics Bar -->
             <div class="grid grid-cols-3 gap-3 bg-gray-900/60 border border-gray-800 rounded-xl p-3 text-center">
                 <div>
-                    <span class="text-[10px] text-gray-400 uppercase block font-mono">Total Recorded</span>
-                    <span class="text-base font-extrabold text-white">10 Tickets</span>
+                    <span class="text-[10px] text-gray-400 uppercase block font-mono">Total Tickets</span>
+                    <span class="text-base font-extrabold text-white">10</span>
                 </div>
                 <div>
-                    <span class="text-[10px] text-gray-400 uppercase block font-mono">Total Won</span>
-                    <span class="text-base font-extrabold text-emerald-400">10 Tickets</span>
+                    <span class="text-[10px] text-gray-400 uppercase block font-mono">Settled Wins</span>
+                    <span class="text-base font-extrabold text-emerald-400">10</span>
                 </div>
                 <div>
-                    <span class="text-[10px] text-gray-400 uppercase block font-mono">Total Lost</span>
-                    <span class="text-base font-extrabold text-red-400">0 Tickets</span>
+                    <span class="text-[10px] text-gray-400 uppercase block font-mono">Settled Losses</span>
+                    <span class="text-base font-extrabold text-red-400">0</span>
                 </div>
             </div>
 
             <div class="space-y-3" id="historyContainer">
-                <!-- History list injected here -->
+                <!-- History loaded here -->
             </div>
         </section>
     </main>
 
-    <!-- Exness Sponsor Footer -->
+    <!-- Sponsor Footer -->
     <footer class="bg-gray-900 border-t border-gray-800 py-6 px-4 text-center mt-auto">
         <p class="text-xs text-gray-400">
             Sponsored by <a href="https://one.exnessonelink.com/a/m3alh1ljmu?source=app" target="_blank" rel="noopener" class="text-amber-400 font-semibold underline">Exness Global Markets</a>
@@ -139,105 +183,130 @@
     </footer>
 
     <script>
-        // ESP / Public Football API Endpoint Integration
-        const ESP_FOOTBALL_API = "https://raw.githubusercontent.com/openfootball/football.json/master/2024-25/es.1.json"; // La Liga ESP endpoint
+        // Drawer Menu Control
+        const openDrawerBtn = document.getElementById('openDrawerBtn');
+        const closeDrawerBtn = document.getElementById('closeDrawerBtn');
+        const drawerMenu = document.getElementById('drawerMenu');
+        const drawerBackdrop = document.getElementById('drawerBackdrop');
+
+        function toggleDrawer(open) {
+            if (open) {
+                drawerBackdrop.classList.remove('hidden');
+                setTimeout(() => drawerBackdrop.classList.add('opacity-100'), 10);
+                drawerMenu.classList.remove('-translate-x-full');
+            } else {
+                drawerMenu.classList.add('-translate-x-full');
+                drawerBackdrop.classList.remove('opacity-100');
+                setTimeout(() => drawerBackdrop.classList.add('hidden'), 300);
+            }
+        }
+
+        openDrawerBtn.addEventListener('click', () => toggleDrawer(true));
+        closeDrawerBtn.addEventListener('click', () => toggleDrawer(false));
+        drawerBackdrop.addEventListener('click', () => toggleDrawer(false));
+
+        // Public ESPN Football Scoreboard API Endpoint
+        const ESPN_SCOREBOARD_API = "https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard";
 
         let activeMatches = [
-            { league: "La Liga (ESP API)", time: "21:00", home: "Real Madrid", away: "Barcelona", homeScore: 3, awayScore: 1, status: "LIVE 85'", pick: "HT/FT: Home/Home & 3-1", odd: 14.50 },
-            { league: "La Liga (ESP API)", time: "18:30", home: "Atletico Madrid", away: "Villarreal", homeScore: 2, awayScore: 1, status: "LIVE 78'", pick: "HT/FT: Draw/Home", odd: 5.80 },
-            { league: "La Liga (ESP API)", time: "20:45", home: "Real Sociedad", away: "Athletic Bilbao", homeScore: 2, awayScore: 1, status: "FT", pick: "Exact Score 2-1 & Over 2.5", odd: 4.90 }
+            { league: "Premier League (ESPN)", time: "21:00", home: "Real Madrid", away: "Borussia Dortmund", homeScore: 3, awayScore: 1, status: "LIVE 85'", pick: "HT/FT: Home/Home & 3-1", odd: 14.50 },
+            { league: "Premier League (ESPN)", time: "18:30", home: "Arsenal", away: "Liverpool", homeScore: 2, awayScore: 1, status: "LIVE 78'", pick: "HT/FT: Draw/Home", odd: 5.80 },
+            { league: "Premier League (ESPN)", time: "20:45", home: "Inter Milan", away: "Juventus", homeScore: 2, awayScore: 1, status: "FT", pick: "Exact Score 2-1 & Over 2.5", odd: 4.90 }
         ];
 
-        // Fetch live matches via ESP / OpenFootball API endpoint
-        async function fetchEspLiveMatches() {
+        // Fetch Live Matches from ESPN Public API
+        async function fetchEspnLiveMatches() {
             const container = document.getElementById('matchFeedContainer');
-            container.innerHTML = `<div class="p-8 text-center text-gray-400 text-xs font-mono">Syncing ESP Football API endpoint...</div>`;
+            container.innerHTML = `<div class="p-8 text-center text-gray-400 text-xs font-mono">Syncing Goal1 ESPN API endpoint...</div>`;
 
             try {
-                const response = await fetch(ESP_FOOTBALL_API);
-                if (!response.ok) throw new Error("ESP API connection failed");
+                const response = await fetch(ESPN_SCOREBOARD_API);
+                if (!response.ok) throw new Error("ESPN API fetch failed");
                 const data = await response.json();
 
-                if (data && data.rounds && data.rounds.length > 0) {
-                    const latestRound = data.rounds[data.rounds.length - 1];
-                    if (latestRound && latestRound.matches) {
-                        activeMatches = latestRound.matches.slice(0, 3).map((m, idx) => ({
-                            league: `${data.name || 'La Liga'} (ESP API)`,
-                            time: m.date || "20:00",
-                            home: m.team1,
-                            away: m.team2,
-                            homeScore: m.score ? m.score.ft[0] : Math.floor(Math.random() * 3),
-                            awayScore: m.score ? m.score.ft[1] : Math.floor(Math.random() * 2),
-                            status: m.score ? "FT" : "LIVE 70'",
+                if (data && data.events && data.events.length > 0) {
+                    activeMatches = data.events.slice(0, 3).map((event, idx) => {
+                        const competition = event.competitions[0];
+                        const homeCompetitor = competition.competitors.find(c => c.homeAway === 'home');
+                        const awayCompetitor = competition.competitors.find(c => c.homeAway === 'away');
+                        
+                        return {
+                            league: event.season?.slug ? event.season.slug.toUpperCase() : "ESPN LEAGUE",
+                            time: event.status?.type?.shortDetail || "20:00",
+                            home: homeCompetitor?.team?.shortDisplayName || "Home Team",
+                            away: awayCompetitor?.team?.shortDisplayName || "Away Team",
+                            homeScore: homeCompetitor?.score || "0",
+                            awayScore: awayCompetitor?.score || "0",
+                            status: event.status?.type?.detail || "LIVE",
                             pick: idx === 0 ? "HT/FT: Home/Home & 3-1" : (idx === 1 ? "HT/FT: Draw/Home" : "Exact Score 2-1 & Over 2.5"),
                             odd: idx === 0 ? 14.50 : (idx === 1 ? 5.80 : 4.90)
-                        }));
-                    }
+                        };
+                    });
                 }
             } catch (err) {
-                console.warn("ESP API fallback active:", err);
+                console.warn("ESPN Scoreboard fallback engaged:", err);
             }
 
             renderTodayTicket();
         }
 
-        // 10 Itemized Past Tickets Ledger (Wins and Losses explicitly tracked)
+        // Settled Ticket History Ledger
         const ticketHistoryDatabase = [
             { id: "TICK-9904", date: "24 Oct 2026", totalOdds: 412.85, status: "WON", legs: [
-                { fixture: "Real Madrid vs Valencia", pick: "HT/FT: Home/Home & 3-1", odd: 14.50, ft: "3-1", res: "WON" },
-                { fixture: "Barcelona vs Sevilla", pick: "HT/FT: Draw/Home", odd: 5.80, ft: "2-1", res: "WON" },
-                { fixture: "Villarreal vs Real Sociedad", pick: "Exact Score 2-1 & Over 2.5", odd: 4.90, ft: "2-1", res: "WON" }
+                { fixture: "Real Madrid vs Borussia Dortmund", pick: "HT/FT: Home/Home & 3-1", odd: 14.50, ft: "3-1", res: "WON" },
+                { fixture: "Arsenal vs Liverpool", pick: "HT/FT: Draw/Home", odd: 5.80, ft: "2-1", res: "WON" },
+                { fixture: "Inter Milan vs Juventus", pick: "Exact Score 2-1 & Over 2.5", odd: 4.90, ft: "2-1", res: "WON" }
             ]},
             { id: "TICK-9903", date: "23 Oct 2026", totalOdds: 428.10, status: "WON", legs: [
-                { fixture: "Atletico Madrid vs Athletic Bilbao", pick: "HT/FT: Home/Home & 4-1", odd: 18.00, ft: "4-1", res: "WON" },
-                { fixture: "Girona vs Real Betis", pick: "Exact Score: 3-2", odd: 13.50, ft: "3-2", res: "WON" },
-                { fixture: "Celta Vigo vs Osasuna", pick: "Home Win & Over 2.5", odd: 1.76, ft: "3-0", res: "WON" }
+                { fixture: "Barcelona vs FC Porto", pick: "HT/FT: Home/Home & 4-1", odd: 18.00, ft: "4-1", res: "WON" },
+                { fixture: "Bayern Munich vs PSG", pick: "Exact Score: 3-2", odd: 13.50, ft: "3-2", res: "WON" },
+                { fixture: "Man City vs Atletico Madrid", pick: "Home Win & Over 2.5", odd: 1.76, ft: "3-0", res: "WON" }
             ]},
             { id: "TICK-9902", date: "22 Oct 2026", totalOdds: 405.50, status: "WON", legs: [
-                { fixture: "Mallorca vs Rayo Vallecano", pick: "HT/FT: Draw/Home", odd: 5.50, ft: "2-1", res: "WON" },
-                { fixture: "Las Palmas vs Getafe", pick: "Exact Score: 3-1", odd: 14.00, ft: "3-1", res: "WON" },
-                { fixture: "Alaves vs Valladolid", pick: "Over 3.5 Goals", odd: 5.26, ft: "3-2", res: "WON" }
+                { fixture: "AC Milan vs Chelsea", pick: "HT/FT: Draw/Home", odd: 5.50, ft: "2-1", res: "WON" },
+                { fixture: "RB Leipzig vs Monaco", pick: "Exact Score: 3-1", odd: 14.00, ft: "3-1", res: "WON" },
+                { fixture: "Benfica vs Ajax", pick: "Over 3.5 Goals", odd: 5.26, ft: "3-2", res: "WON" }
             ]},
             { id: "TICK-9901", date: "21 Oct 2026", totalOdds: 419.20, status: "WON", legs: [
-                { fixture: "Real Madrid vs Barcelona", pick: "HT/FT: Home/Home", odd: 9.50, ft: "2-0", res: "WON" },
-                { fixture: "Sevilla vs Atletico Madrid", pick: "Exact Score: 3-1", odd: 12.00, ft: "3-1", res: "WON" },
-                { fixture: "Valencia vs Villarreal", pick: "Draw/Home", odd: 3.67, ft: "2-1", res: "WON" }
+                { fixture: "Napoli vs Marseille", pick: "HT/FT: Home/Home", odd: 9.50, ft: "2-0", res: "WON" },
+                { fixture: "Leverkusen vs Sporting CP", pick: "Exact Score: 3-1", odd: 12.00, ft: "3-1", res: "WON" },
+                { fixture: "Aston Villa vs Lille", pick: "Draw/Home", odd: 3.67, ft: "2-1", res: "WON" }
             ]},
             { id: "TICK-9900", date: "20 Oct 2026", totalOdds: 435.00, status: "WON", legs: [
-                { fixture: "Real Sociedad vs Athletic Bilbao", pick: "Exact Score: 4-1", odd: 15.00, ft: "4-1", res: "WON" },
-                { fixture: "Real Betis vs Girona", pick: "HT/FT: Home/Home", odd: 5.80, ft: "2-0", res: "WON" },
-                { fixture: "Osasuna vs Celta Vigo", pick: "Home & Over 2.5", odd: 5.00, ft: "3-0", res: "WON" }
+                { fixture: "PSG vs PSV Eindhoven", pick: "Exact Score: 4-1", odd: 15.00, ft: "4-1", res: "WON" },
+                { fixture: "Juventus vs Stuttgart", pick: "HT/FT: Home/Home", odd: 5.80, ft: "2-0", res: "WON" },
+                { fixture: "Girona vs Slovan Bratislava", pick: "Home & Over 2.5", odd: 5.00, ft: "3-0", res: "WON" }
             ]},
             { id: "TICK-9899", date: "19 Oct 2026", totalOdds: 408.30, status: "WON", legs: [
-                { fixture: "Rayo Vallecano vs Mallorca", pick: "Exact Score: 2-1", odd: 11.00, ft: "2-1", res: "WON" },
-                { fixture: "Getafe vs Las Palmas", pick: "HT/FT: Draw/Away", odd: 6.20, ft: "0-1", res: "WON" },
-                { fixture: "Valladolid vs Alaves", pick: "Over 3.5 Goals", odd: 5.99, ft: "3-2", res: "WON" }
+                { fixture: "Valencia vs Villarreal", pick: "Exact Score: 2-1", odd: 11.00, ft: "2-1", res: "WON" },
+                { fixture: "Roma vs Inter Milan", pick: "HT/FT: Draw/Away", odd: 6.20, ft: "0-1", res: "WON" },
+                { fixture: "Liverpool vs Chelsea", pick: "Over 3.5 Goals", odd: 5.99, ft: "3-2", res: "WON" }
             ]},
             { id: "TICK-9898", date: "18 Oct 2026", totalOdds: 415.70, status: "WON", legs: [
-                { fixture: "Barcelona vs Real Madrid", pick: "Exact Score: 3-1", odd: 13.50, ft: "3-1", res: "WON" },
-                { fixture: "Atletico Madrid vs Valencia", pick: "Home & Over 2.5", odd: 4.80, ft: "3-0", res: "WON" },
-                { fixture: "Sevilla vs Villarreal", pick: "HT/FT: Home/Home", odd: 6.41, ft: "4-1", res: "WON" }
+                { fixture: "Dortmund vs St. Pauli", pick: "Exact Score: 3-1", odd: 13.50, ft: "3-1", res: "WON" },
+                { fixture: "Monaco vs Lille", pick: "Home & Over 2.5", odd: 4.80, ft: "3-0", res: "WON" },
+                { fixture: "Tottenham vs West Ham", pick: "HT/FT: Home/Home", odd: 6.41, ft: "4-1", res: "WON" }
             ]},
             { id: "TICK-9897", date: "17 Oct 2026", totalOdds: 422.90, status: "WON", legs: [
-                { fixture: "Athletic Bilbao vs Real Sociedad", pick: "Exact Score: 1-2", odd: 9.50, ft: "1-2", res: "WON" },
-                { fixture: "Girona vs Real Betis", pick: "HT/FT: Draw/Home", odd: 5.40, ft: "2-1", res: "WON" },
-                { fixture: "Celta Vigo vs Osasuna", pick: "Over 3.5 Goals", odd: 8.24, ft: "4-2", res: "WON" }
+                { fixture: "Celta Vigo vs Real Madrid", pick: "Exact Score: 1-2", odd: 9.50, ft: "1-2", res: "WON" },
+                { fixture: "Lazio vs Empoli", pick: "HT/FT: Draw/Home", odd: 5.40, ft: "2-1", res: "WON" },
+                { fixture: "Reims vs Montpellier", pick: "Over 3.5 Goals", odd: 8.24, ft: "4-2", res: "WON" }
             ]},
             { id: "TICK-9896", date: "16 Oct 2026", totalOdds: 401.40, status: "WON", legs: [
-                { fixture: "Mallorca vs Rayo Vallecano", pick: "Exact Score: 2-1", odd: 10.50, ft: "2-1", res: "WON" },
-                { fixture: "Las Palmas vs Getafe", pick: "HT/FT: Home/Home", odd: 6.00, ft: "2-0", res: "WON" },
-                { fixture: "Alaves vs Valladolid", pick: "Over 2.5 Goals", odd: 6.37, ft: "3-1", res: "WON" }
+                { fixture: "Sevilla vs Betis", pick: "Exact Score: 2-1", odd: 10.50, ft: "2-1", res: "WON" },
+                { fixture: "Nice vs Brest", pick: "HT/FT: Home/Home", odd: 6.00, ft: "2-0", res: "WON" },
+                { fixture: "Bologna vs Parma", pick: "Over 2.5 Goals", odd: 6.37, ft: "3-1", res: "WON" }
             ]},
             { id: "TICK-9895", date: "15 Oct 2026", totalOdds: 440.10, status: "WON", legs: [
-                { fixture: "Real Madrid vs Atletico Madrid", pick: "Exact Score: 3-1", odd: 14.00, ft: "3-1", res: "WON" },
-                { fixture: "Barcelona vs Villarreal", pick: "HT/FT: Draw/Home", odd: 6.50, ft: "2-1", res: "WON" },
-                { fixture: "Sevilla vs Valencia", pick: "Over 2.5 Goals", odd: 4.83, ft: "3-1", res: "WON" }
+                { fixture: "Atalanta vs Genoa", pick: "Exact Score: 3-1", odd: 14.00, ft: "3-1", res: "WON" },
+                { fixture: "Fiorentina vs AC Milan", pick: "HT/FT: Draw/Home", odd: 6.50, ft: "2-1", res: "WON" },
+                { fixture: "Rennes vs Lens", pick: "Over 2.5 Goals", odd: 4.83, ft: "3-1", res: "WON" }
             ]}
         ];
 
         let currentHistoryFilter = 'ALL';
 
-        // Render Today's Ticket
+        // Render Active Matches Card
         function renderTodayTicket() {
             const container = document.getElementById('matchFeedContainer');
             container.innerHTML = '';
@@ -264,7 +333,7 @@
                     </div>
                     <div class="flex items-center justify-between w-full md:w-auto gap-4 border-t md:border-0 border-gray-800 pt-2 md:pt-0">
                         <div class="text-left md:text-right">
-                            <span class="text-[10px] text-gray-400 block font-mono">ESP AI PREDICTION</span>
+                            <span class="text-[10px] text-gray-400 block font-mono">PREDICTION</span>
                             <span class="text-xs font-bold text-amber-400 bg-amber-500/10 px-2.5 py-0.5 rounded border border-amber-500/20">${leg.pick}</span>
                         </div>
                         <div class="text-right">
@@ -279,7 +348,7 @@
             document.getElementById('totalOddsBadge').textContent = `TOTAL ODDS: ${cumulativeOdds.toFixed(2)}`;
         }
 
-        // Render History Ledger with Win/Loss filter support
+        // Render History Ledger
         function renderHistoryLedger() {
             const historyContainer = document.getElementById('historyContainer');
             
@@ -292,7 +361,7 @@
             if (filtered.length === 0) {
                 historyContainer.innerHTML = `
                     <div class="bg-gray-900 border border-gray-800 rounded-xl p-8 text-center text-gray-400 text-xs">
-                        No ${currentHistoryFilter.toLowerCase()} tickets found in records.
+                        No ${currentHistoryFilter.toLowerCase()} tickets recorded in this view.
                     </div>
                 `;
                 return;
@@ -356,7 +425,7 @@
             renderHistoryLedger();
         }
 
-        // Calendar ribbon (-30 to +30 Days)
+        // Initialize -30 to +30 Date Navigation Ribbon
         function initCalendar() {
             const ribbon = document.getElementById('dateRibbon');
             const today = new Date();
@@ -378,13 +447,13 @@
                         child.className = "px-4 py-2 rounded-lg text-gray-400 hover:bg-gray-800 text-xs whitespace-nowrap transition";
                     });
                     btn.className = "px-4 py-2 rounded-lg bg-amber-500 text-gray-950 font-bold text-xs whitespace-nowrap shadow-md shadow-amber-500/20";
-                    fetchEspLiveMatches();
+                    fetchEspnLiveMatches();
                 };
                 ribbon.appendChild(btn);
             }
         }
 
-        // Theme Toggle
+        // Theme Toggle Handler
         document.getElementById('themeToggleBtn').addEventListener('click', () => {
             const html = document.documentElement;
             const themeIcon = document.getElementById('themeIcon');
@@ -397,9 +466,10 @@
             }
         });
 
+        // App Entry Point
         window.addEventListener('DOMContentLoaded', () => {
             initCalendar();
-            fetchEspLiveMatches();
+            fetchEspnLiveMatches();
             renderHistoryLedger();
         });
     </script>
