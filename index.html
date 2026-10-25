@@ -157,7 +157,7 @@
         let secondsRemaining = 30;
 
         const globalTeams = [
-            { league: "ENGLISH PREMIER LEAGUE", home: "Arsenal", away: "Chelsea" },
+            { league: "ENGLISH PREMIER LEAGUE", home: "Crystal Palace", away: "Newcastle" },
             { league: "SPANISH LA LIGA", home: "Real Madrid", away: "Barcelona" },
             { league: "ITALIAN SERIE A", home: "Inter Milan", away: "Juventus" },
             { league: "GERMAN BUNDESLIGA", home: "Bayern Munich", away: "Dortmund" }
@@ -193,6 +193,8 @@
                     if (idx === 0) { status = "LIVE 76'"; hScore = 2; aScore = 1; }
                     else if (idx === 1) { status = "LIVE 89'"; hScore = 1; aScore = 1; }
                     else { status = "FT"; hScore = 3; aScore = 0; }
+                } else {
+                    status = "FT";
                 }
 
                 const isWon = (status === "FT" || status.includes("LIVE")) 
@@ -209,7 +211,7 @@
                     pick: pickObj.label,
                     odd: pickObj.odd,
                     isWon: isWon,
-                    isUpcoming: dayDiff > 0
+                    isUpcoming: dayDiff > 0 || status === "UPCOMING"
                 };
             });
         }
@@ -220,6 +222,18 @@
             
             if (container && !isSilentRefresh) {
                 container.innerHTML = `<div class="p-8 text-center text-gray-400 text-xs font-mono">Running Goal1 AI analytics for ${dateObj.toLocaleDateString()}...</div>`;
+            }
+
+            const today = new Date();
+            today.setHours(0,0,0,0);
+            const target = new Date(dateObj);
+            target.setHours(0,0,0,0);
+            const dayDiff = Math.round((target - today) / (1000 * 60 * 60 * 24));
+
+            if (dayDiff > 0) {
+                renderFeed(getSimulatedData(dateObj));
+                resetAutoRefreshCountdown();
+                return;
             }
 
             const yyyymmdd = getYYYYMMDD(dateObj);
@@ -234,13 +248,13 @@
                     if (json && json.events && json.events.length >= 4) {
                         matches = json.events.slice(0, 4).map((ev, i) => {
                             const comp = ev.competitions?.[0];
-                            const home = comp?.competitors?.find(c => c.homeAway === 'home')?.team?.shortDisplayName || "Home";
-                            const away = comp?.competitors?.find(c => c.homeAway === 'away')?.team?.shortDisplayName || "Away";
+                            const home = comp?.competitors?.find(c => c.homeAway === 'home')?.team?.shortDisplayName || globalTeams[i].home;
+                            const away = comp?.competitors?.find(c => c.homeAway === 'away')?.team?.shortDisplayName || globalTeams[i].away;
                             const league = ev.season?.slug ? ev.season.slug.toUpperCase() : "ENGLISH PREMIER LEAGUE";
                             
                             const pickObj = aiPickPool[i % aiPickPool.length];
-                            let hScore = parseInt(comp?.competitors?.find(c => c.homeAway === 'home')?.score, 10);
-                            let aScore = parseInt(comp?.competitors?.find(c => c.homeAway === 'away')?.score, 10);
+                            let hScore = comp?.competitors?.find(c => c.homeAway === 'home')?.score;
+                            let aScore = comp?.competitors?.find(c => c.homeAway === 'away')?.score;
 
                             const state = ev.status?.type?.state;
                             let status = ev.status?.type?.detail || "FT";
@@ -255,10 +269,14 @@
                                 status = "FT";
                             }
 
-                            if (isNaN(hScore)) hScore = (i % 2 === 0) ? 2 : 1;
-                            if (isNaN(aScore)) aScore = 1;
+                            if (hScore === undefined || hScore === null || status === "UPCOMING") {
+                                hScore = "-";
+                                aScore = "-";
+                            }
 
-                            const isWon = state === "pre" ? true : pickObj.check(hScore, aScore);
+                            const numericH = hScore === "-" ? 0 : parseInt(hScore, 10);
+                            const numericA = aScore === "-" ? 0 : parseInt(aScore, 10);
+                            const isWon = status === "UPCOMING" ? true : pickObj.check(numericH, numericA);
 
                             return {
                                 league, home, away,
@@ -268,7 +286,7 @@
                                 pick: pickObj.label,
                                 odd: pickObj.odd,
                                 isWon,
-                                isUpcoming: state === "pre"
+                                isUpcoming: status === "UPCOMING"
                             };
                         });
                     } else {
