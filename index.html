@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WINS1 VIP | AI 100+ Odds Global Accumulator</title>
+    <title>WINS1 VIP | Global 100+ Odds Accumulator</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -45,7 +45,7 @@
             </div>
             <nav class="space-y-2">
                 <a href="#" onclick="toggleDrawer(false)" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl bg-amber-500/10 text-amber-400 font-semibold text-xs border border-amber-500/20">
-                    <span>AI VIP 100+ Accumulator</span>
+                    <span>VIP 100+ Accumulator</span>
                 </a>
                 <a href="https://one.exnessonelink.com/a/m3alh1ljmu?source=app" target="_blank" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl text-gray-400 hover:text-white hover:bg-gray-800 font-medium text-xs transition">
                     <span>Trade Exness Markets</span>
@@ -53,7 +53,7 @@
             </nav>
         </div>
         <div class="pt-4 border-t border-gray-800 text-center">
-            <span class="text-[10px] text-gray-500 font-mono">AI Neural Profitability Filter Active</span>
+            <span class="text-[10px] text-gray-500 font-mono">Professional Analytics Engine Active</span>
         </div>
     </aside>
 
@@ -69,7 +69,7 @@
                     <div class="flex items-center space-x-2">
                         <h1 class="font-extrabold text-lg text-white">WINS1 <span class="text-amber-400">VIP</span></h1>
                         <span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
-                            <span class="w-2 h-2 rounded-full bg-emerald-400 pulse-live"></span> AI 100+ ENGINE
+                            <span class="w-2 h-2 rounded-full bg-emerald-400 pulse-live"></span> 100+ ODDS VIP
                         </span>
                     </div>
                 </div>
@@ -85,10 +85,10 @@
         <!-- Status Banner -->
         <div class="bg-gradient-to-r from-amber-950/40 via-yellow-900/20 to-amber-950/40 border border-amber-500/30 rounded-2xl p-4 flex flex-col md:flex-row items-center justify-between gap-4 shadow-xl">
             <div class="flex items-center space-x-3">
-                <div class="p-3 bg-amber-500/10 rounded-xl border border-amber-500/20 text-amber-400 font-mono text-xs font-bold">AI PROFIT</div>
+                <div class="p-3 bg-amber-500/10 rounded-xl border border-amber-500/20 text-amber-400 font-mono text-xs font-bold">VIP SYNC</div>
                 <div>
-                    <h2 class="font-bold text-amber-300 text-sm">AI Profitable Picks & Worldwide Match Analyzer</h2>
-                    <p class="text-xs text-gray-400">Scanning global leagues for high-value 100+ odds accumulators.</p>
+                    <h2 class="font-bold text-amber-300 text-sm">Global Match Engine & Live Auto-Refresh</h2>
+                    <p class="text-xs text-gray-400">Scanning worldwide leagues for high-value 100+ odds accumulators.</p>
                 </div>
             </div>
             <div class="flex items-center gap-2">
@@ -108,7 +108,7 @@
         <section class="space-y-4">
             <div class="flex items-center justify-between">
                 <h3 class="font-bold text-white text-base flex items-center gap-2">
-                    <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span> <span id="sectionTitleDate">TODAY'S</span> AI VIP 100+ ACCUMULATOR
+                    <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span> <span id="sectionTitleDate">TODAY'S</span> VIP 100+ ACCUMULATOR
                 </h3>
                 <span class="text-xs bg-amber-500/10 text-amber-400 border border-amber-500/30 px-2.5 py-1 rounded font-mono font-bold" id="totalOddsBadge">
                     TOTAL ODDS: 0.00
@@ -156,7 +156,7 @@
         let countdownTimer = null;
         let secondsRemaining = 30;
 
-        const aiPickCatalog = [
+        const pickCatalog = [
             { label: "1X2: Home Win", check: (h, a) => h > a },
             { label: "BTTS: Yes", check: (h, a) => h > 0 && a > 0 },
             { label: "Over 2.5 Goals", check: (h, a) => (h + a) > 2 },
@@ -165,35 +165,33 @@
             { label: "Over 1.5 Goals", check: (h, a) => (h + a) > 1 }
         ];
 
-        // Generates profitable high-value odds calibrated to compound into ~100-150 total odds
-        function getAIOdds(seed, index) {
+        function getOddsValue(seed, index) {
             const oddsList = [3.15, 2.85, 3.40, 4.25, 2.95, 3.60];
             const variance = ((seed * (index + 3)) % 15) / 100;
             return parseFloat((oddsList[index % oddsList.length] + variance).toFixed(2));
         }
 
-        async function fetchAIPriftableAccumulator(dateObj, isSilentRefresh = false) {
+        async function fetchMatchData(dateObj, isSilentRefresh = false) {
             selectedDateObj = dateObj;
             const container = document.getElementById('matchFeedContainer');
             
             if (container && !isSilentRefresh) {
-                container.innerHTML = `<div class="p-8 text-center text-gray-400 text-xs font-mono">AI analyzing profitable fixtures across global leagues for ${dateObj.toLocaleDateString()}...</div>`;
+                container.innerHTML = `<div class="p-8 text-center text-gray-400 text-xs font-mono">Syncing global league fixtures for ${dateObj.toLocaleDateString()}...</div>`;
             }
 
             const yyyymmdd = getYYYYMMDD(dateObj);
             const seed = dateObj.getDate() + (dateObj.getMonth() + 1) * 41;
             const espnGlobalUrl = `https://site.api.espn.com/apis/site/v2/sports/soccer/all/scoreboard?dates=${yyyymmdd}`;
 
-            let profitableMatches = [];
+            let matchEntries = [];
 
             try {
                 const res = await fetch(espnGlobalUrl);
                 if (res.ok) {
                     const json = await res.json();
                     if (json && json.events && json.events.length > 0) {
-                        // Filter and select top profitable matches globally (up to 4 matches for 100+ accumulator)
                         const rawEvents = json.events.slice(0, 5);
-                        profitableMatches = rawEvents.map((ev, i) => {
+                        matchEntries = rawEvents.map((ev, i) => {
                             const comp = ev.competitions?.[0];
                             const home = comp?.competitors?.find(c => c.homeAway === 'home')?.team?.displayName || "Home Team";
                             const away = comp?.competitors?.find(c => c.homeAway === 'away')?.team?.displayName || "Away Team";
@@ -202,8 +200,8 @@
                                 ? ev.season.slug.toUpperCase().replace(/-/g, ' ') 
                                 : (ev.league?.name || "GLOBAL LEAGUE").toUpperCase();
                             
-                            const pickObj = aiPickCatalog[(seed + i) % aiPickCatalog.length];
-                            const odd = getAIOdds(seed, i);
+                            const pickObj = pickCatalog[(seed + i) % pickCatalog.length];
+                            const odd = getOddsValue(seed, i);
 
                             let rawHScore = comp?.competitors?.find(c => c.homeAway === 'home')?.score;
                             let rawAScore = comp?.competitors?.find(c => c.homeAway === 'away')?.score;
@@ -244,12 +242,12 @@
                     }
                 }
             } catch (e) {
-                console.error("AI Global Fetch Error", e);
+                console.error("Global Feed Error", e);
             }
 
-            if (profitableMatches.length === 0) {
+            if (matchEntries.length === 0) {
                 if (container) {
-                    container.innerHTML = `<div class="p-8 text-center text-gray-400 text-xs font-mono">No AI profitable fixtures discovered for ${dateObj.toLocaleDateString()}. Try browsing neighboring dates.</div>`;
+                    container.innerHTML = `<div class="p-8 text-center text-gray-400 text-xs font-mono">No VIP accumulator fixtures found for ${dateObj.toLocaleDateString()}. Please select another date.</div>`;
                 }
                 const oddsBadge = document.getElementById('totalOddsBadge');
                 if (oddsBadge) oddsBadge.textContent = `TOTAL ODDS: 0.00`;
@@ -257,7 +255,7 @@
                 return;
             }
 
-            renderFeed(profitableMatches);
+            renderFeed(matchEntries);
             resetAutoRefreshCountdown();
         }
 
@@ -266,7 +264,6 @@
             if (!container) return;
             container.innerHTML = '';
             
-            // Compound total odds across AI selections
             let totalOdds = matches.reduce((acc, m) => acc * m.odd, 1.0);
 
             matches.forEach(m => {
@@ -301,7 +298,7 @@
                     <div class="flex items-center justify-between w-full md:w-auto gap-4 border-t md:border-0 border-gray-800 pt-2 md:pt-0">
                         <div class="text-left md:text-right flex items-center space-x-2">
                             <div>
-                                <span class="text-[10px] text-gray-400 block font-mono">AI PROFITABLE PICK</span>
+                                <span class="text-[10px] text-gray-400 block font-mono">VIP SELECTION</span>
                                 <span class="text-xs font-bold text-amber-400 bg-amber-500/10 px-2.5 py-0.5 rounded border border-amber-500/20">${m.pick}</span>
                             </div>
                             ${badge}
@@ -332,7 +329,7 @@
 
                 if (secondsRemaining <= 0) {
                     secondsRemaining = 30;
-                    fetchAIPriftableAccumulator(selectedDateObj, true);
+                    fetchMatchData(selectedDateObj, true);
                 }
             }, 1000);
         }
@@ -344,7 +341,7 @@
         }
 
         function manualRefresh() {
-            fetchAIPriftableAccumulator(selectedDateObj, false);
+            fetchMatchData(selectedDateObj, false);
         }
 
         function initRibbon() {
@@ -372,7 +369,7 @@
                     Array.from(ribbon.children).forEach(c => c.className = "px-4 py-2 rounded-lg text-gray-400 hover:bg-gray-800 text-xs whitespace-nowrap transition");
                     btn.className = "px-4 py-2 rounded-lg bg-amber-500 text-gray-950 font-bold text-xs whitespace-nowrap shadow-md shadow-amber-500/20";
                     document.getElementById('sectionTitleDate').textContent = i === 0 ? "TODAY'S" : label.toUpperCase();
-                    fetchAIPriftableAccumulator(target, false);
+                    fetchMatchData(target, false);
                 };
 
                 ribbon.appendChild(btn);
@@ -393,7 +390,7 @@
 
         window.addEventListener('DOMContentLoaded', () => {
             initRibbon();
-            fetchAIPriftableAccumulator(new Date(), false);
+            fetchMatchData(new Date(), false);
             initAutoRefresh();
         });
     </script>
