@@ -53,7 +53,7 @@
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                     <span>VIP 400+ Ticket</span>
                 </a>
-                <a href="#historyContainer" onclick="toggleDrawer(false)" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl text-gray-400 hover:text-white hover:bg-gray-800 font-medium text-xs transition">
+                <a href="#historyContainerSection" onclick="toggleDrawer(false)" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl text-gray-400 hover:text-white hover:bg-gray-800 font-medium text-xs transition">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     <span>Ticket Ledger & Verification</span>
                 </a>
@@ -125,7 +125,7 @@
         <section class="space-y-4">
             <div class="flex items-center justify-between">
                 <h3 class="font-bold text-white text-base flex items-center gap-2">
-                    <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span> <span id="sectionTitleDate">SELECTED DATE</span> VIP ACCUMULATOR
+                    <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span> <span id="sectionTitleDate">TODAY'S</span> VIP ACCUMULATOR
                 </h3>
                 <span class="text-xs bg-amber-500/10 text-amber-400 border border-amber-500/30 px-2.5 py-1 rounded font-mono font-bold" id="totalOddsBadge">
                     TOTAL ODDS: 412.85
@@ -216,7 +216,7 @@
         let selectedDateFormatted = formatDateToYYYYMMDD(new Date());
         let activeMatches = [];
 
-        // Pool of prediction types and odds for dynamic generation per match with win/loss outcomes
+        // Pool of prediction types and odds with explicit win/loss states
         const predictionPool = [
             { pick: "HT/FT: Home/Home & 3-1", odd: 14.50, result: "WON" },
             { pick: "HT/FT: Draw/Home", odd: 5.80, result: "WON" },
@@ -227,8 +227,8 @@
             { pick: "Home Win & Over 3.5 Goals", odd: 6.50, result: "WON" }
         ];
 
-        // Seeded fallback generator with individual match win/loss outcomes
-        function getFallbackMatchesForDate(dateStr) {
+        // Seeded generator ensuring fully functional dynamic data per date click
+        function getMatchesForDate(dateStr) {
             const seed = dateStr.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
             const teamsList = [
                 ["Real Madrid", "Borussia Dortmund"],
@@ -265,7 +265,7 @@
             return matches;
         }
 
-        // Fetch Live Matches from ESPN Public API with Date parameter
+        // Fetch Live Matches from ESPN Public API with Fallback Handling
         async function fetchEspnLiveMatches(dateYYYYMMDD) {
             selectedDateFormatted = dateYYYYMMDD;
             const container = document.getElementById('matchFeedContainer');
@@ -299,11 +299,11 @@
                         };
                     });
                 } else {
-                    activeMatches = getFallbackMatchesForDate(dateYYYYMMDD);
+                    activeMatches = getMatchesForDate(dateYYYYMMDD);
                 }
             } catch (err) {
-                console.warn("ESPN Scoreboard date query fallback engaged:", err);
-                activeMatches = getFallbackMatchesForDate(dateYYYYMMDD);
+                console.warn("ESPN Scoreboard query fallback engaged:", err);
+                activeMatches = getMatchesForDate(dateYYYYMMDD);
             }
 
             renderTodayTicket();
