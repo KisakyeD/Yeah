@@ -211,60 +211,15 @@
         let activeMatches = [];
 
         const predictionPool = [
-            { pick: "HT/FT: Home/Home & 3-1", odd: 14.50, result: "WON" },
-            { pick: "HT/FT: Draw/Home", odd: 5.80, result: "WON" },
-            { pick: "Exact Score 2-1 & Over 2.5", odd: 4.90, result: "LOST" },
-            { pick: "Both Teams To Score & Over 2.5", odd: 3.80, result: "WON" },
-            { pick: "Exact Score 3-2", odd: 12.00, result: "WON" },
-            { pick: "HT/FT: Away/Home", odd: 22.00, result: "LOST" },
-            { pick: "Home Win & Over 3.5 Goals", odd: 6.50, result: "WON" }
+            { pick: "HT/FT: Home/Home", odd: 3.80, checkWin: (h, a) => h > a },
+            { pick: "Over 2.5 Total Goals", odd: 2.10, checkWin: (h, a) => (h + a) > 2 },
+            { pick: "Home Win & Both Teams", odd: 4.50, checkWin: (h, a) => h > a && a > 0 },
+            { pick: "Exact Score 2-1", odd: 9.50, checkWin: (h, a) => h === 2 && a === 1 },
+            { pick: "Draw & Both Teams", odd: 6.20, checkWin: (h, a) => h === a && h > 0 }
         ];
 
-        // Fetch Live Matches from ESPN Public API with real scores parsing
-        async function fetchEspnLiveMatches(dateYYYYMMDD) {
-            selectedDateFormatted = dateYYYYMMDD;
-            const container = document.getElementById('matchFeedContainer');
-            container.innerHTML = `<div class="p-8 text-center text-gray-400 text-xs font-mono">Syncing live scores from ESPN API...</div>`;
-
-            const espnUrl = `https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard?dates=${dateYYYYMMDD}`;
-
-            try {
-                const response = await fetch(espnUrl);
-                if (!response.ok) throw new Error("ESPN API fetch failed");
-                const data = await response.json();
-
-                if (data && data.events && data.events.length > 0) {
-                    activeMatches = data.events.slice(0, 3).map((event, idx) => {
-                        const competition = event.competitions[0];
-                        const homeCompetitor = competition.competitors.find(c => c.homeAway === 'home');
-                        const awayCompetitor = competition.competitors.find(c => c.homeAway === 'away');
-                        const pred = predictionPool[idx % predictionPool.length];
-
-                        return {
-                            league: event.season?.slug ? event.season.slug.toUpperCase() : "ENGLISH PREMIER LEAGUE",
-                            time: event.status?.type?.shortDetail || "20:00",
-                            home: homeCompetitor?.team?.shortDisplayName || "Home Team",
-                            away: awayCompetitor?.team?.shortDisplayName || "Away Team",
-                            homeScore: homeCompetitor?.score !== undefined ? homeCompetitor.score : "0",
-                            awayScore: awayCompetitor?.score !== undefined ? awayCompetitor.score : "0",
-                            status: event.status?.type?.detail || "SCHEDULED",
-                            pick: pred.pick,
-                            odd: pred.odd,
-                            matchResult: pred.result
-                        };
-                    });
-                } else {
-                    activeMatches = getFallbackMatchesForDate(dateYYYYMMDD);
-                }
-            } catch (err) {
-                console.warn("ESPN Scoreboard query fallback engaged:", err);
-                activeMatches = getFallbackMatchesForDate(dateYYYYMMDD);
-            }
-
-            renderTodayTicket();
-        }
-
-        function getFallbackMatchesForDate(dateStr) {
+        // Generate realistic matches and dynamically validate WON/LOST based on actual scores
+        function getMatchesForDate(dateStr) {
             const seed = dateStr.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
             const teamsList = [
                 ["Real Madrid", "Borussia Dortmund"],
@@ -280,11 +235,16 @@
             const matches = [];
             for (let i = 0; i < 3; i++) {
                 const pairIndex = (seed + i * 2) % teamsList.length;
-                const pickIndex = (seed + i * 3) % predictionPool.length;
-                const hScore = (seed + i) % 4 + 1;
-                const aScore = (seed + i * 2) % 3;
-                const pred = predictionPool[pickIndex];
+                const predIndex = (seed + i * 3) % predictionPool.length;
                 
+                // Generate realistic FT scores
+                const hScore = (seed + i * 7) % 4;
+                const aScore = (seed + i * 3) % 3;
+                const pred = predictionPool[predIndex];
+                
+                // Programmatically compute whether prediction succeeded or failed
+                const isWon = pred.checkWin(hScore, aScore);
+
                 matches.push({
                     league: "UEFA CHAMPIONS LEAGUE",
                     time: "20:00",
@@ -295,10 +255,57 @@
                     status: "FT",
                     pick: pred.pick,
                     odd: pred.odd,
-                    matchResult: pred.result
+                    matchResult: isWon ? "WON" : "LOST"
                 });
             }
             return matches;
+        }
+
+        async function fetchEspnLiveMatches(dateYYYYMMDD) {
+            selectedDateFormatted = dateYYYYMMDD;
+            const container = document.getElementById('matchFeedContainer');
+            container.innerHTML = `<div class="p-8 text-center text-gray-400 text-xs font-mono">Syncing ESPN API for date ${dateYYYYMMDD}...</div>`;
+
+            const espnUrl = `https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard?dates=${dateYYYYMMDD}`;
+
+            try {
+                const response = await fetch(espnUrl);
+                if (!response.ok) throw new Error("ESPN API fetch failed");
+                const data = await response.json();
+
+                if (data && data.events && data.events.length > 0) {
+                    activeMatches = data.events.slice(0, 3).map((event, idx) => {
+                        const competition = event.competitions[0];
+                        const homeCompetitor = competition.competitors.find(c => c.homeAway === 'home');
+                        const awayCompetitor = competition.competitors.find(c => c.homeAway === 'away');
+                        
+                        const hScore = parseInt(homeCompetitor?.score ?? '1', 10);
+                        const aScore = parseInt(awayCompetitor?.score ?? '0', 10);
+                        const pred = predictionPool[idx % predictionPool.length];
+                        const isWon = pred.checkWin(hScore, aScore);
+
+                        return {
+                            league: event.season?.slug ? event.season.slug.toUpperCase() : "ENGLISH PREMIER LEAGUE",
+                            time: event.status?.type?.shortDetail || "20:00",
+                            home: homeCompetitor?.team?.shortDisplayName || "Home Team",
+                            away: awayCompetitor?.team?.shortDisplayName || "Away Team",
+                            homeScore: hScore,
+                            awayScore: aScore,
+                            status: event.status?.type?.detail || "FT",
+                            pick: pred.pick,
+                            odd: pred.odd,
+                            matchResult: isWon ? "WON" : "LOST"
+                        };
+                    });
+                } else {
+                    activeMatches = getMatchesForDate(dateYYYYMMDD);
+                }
+            } catch (err) {
+                console.warn("ESPN Scoreboard fallback engaged:", err);
+                activeMatches = getMatchesForDate(dateYYYYMMDD);
+            }
+
+            renderTodayTicket();
         }
 
         const ticketHistoryDatabase = [
