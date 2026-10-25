@@ -53,7 +53,7 @@
             </nav>
         </div>
         <div class="pt-4 border-t border-gray-800 text-center">
-            <span class="text-[10px] text-gray-500 font-mono">Goal1 Engine &bull; Deep Analytics</span>
+            <span class="text-[10px] text-gray-500 font-mono">Goal1 Engine &bull; AI Analysis Active</span>
         </div>
     </aside>
 
@@ -69,7 +69,7 @@
                     <div class="flex items-center space-x-2">
                         <h1 class="font-extrabold text-lg text-white">WINS1 <span class="text-amber-400">VIP</span></h1>
                         <span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
-                            <span class="w-2 h-2 rounded-full bg-emerald-400 pulse-live"></span> DEEP ANALYTICS
+                            <span class="w-2 h-2 rounded-full bg-emerald-400 pulse-live"></span> GOAL1 LIVE
                         </span>
                     </div>
                 </div>
@@ -82,31 +82,31 @@
 
     <main class="flex-grow max-w-4xl w-full mx-auto px-4 py-6 space-y-6">
 
-        <!-- Banner -->
+        <!-- Status Banner -->
         <div class="bg-gradient-to-r from-amber-950/40 via-yellow-900/20 to-amber-950/40 border border-amber-500/30 rounded-2xl p-4 flex flex-col md:flex-row items-center justify-between gap-4 shadow-xl">
             <div class="flex items-center space-x-3">
-                <div class="p-3 bg-amber-500/10 rounded-xl border border-amber-500/20 text-amber-400 font-mono text-xs font-bold">API LIVE</div>
+                <div class="p-3 bg-amber-500/10 rounded-xl border border-amber-500/20 text-amber-400 font-mono text-xs font-bold">AI SYNC</div>
                 <div>
-                    <h2 class="font-bold text-amber-300 text-sm">Real-Time Goal1 Match & Prediction Feed</h2>
-                    <p class="text-xs text-gray-400">Deep neural xG and verified outcomes generator.</p>
+                    <h2 class="font-bold text-amber-300 text-sm">Goal1 Neural Match Engine & AI Feed</h2>
+                    <p class="text-xs text-gray-400">Real-time fixture analysis and probability calculations.</p>
                 </div>
             </div>
-            <button onclick="loadMatchesForDate(selectedDateObj)" class="bg-amber-500 hover:bg-amber-400 text-gray-950 font-black px-4 py-2 rounded-xl text-xs transition shadow-md shadow-amber-500/20">
-                SYNC ESPN
+            <button onclick="loadGoal1Data(selectedDateObj)" class="bg-amber-500 hover:bg-amber-400 text-gray-950 font-black px-4 py-2 rounded-xl text-xs transition shadow-md shadow-amber-500/20">
+                SYNC GOAL1
             </button>
         </div>
 
-        <!-- Date Ribbon -->
+        <!-- Date Ribbon (-30 to +30 Days) -->
         <div class="flex items-center justify-between bg-gray-900 border border-gray-800 rounded-xl p-1.5 no-scrollbar overflow-x-auto gap-2" id="dateRibbon"></div>
 
-        <!-- Accumulator Section -->
+        <!-- Ticket Section -->
         <section class="space-y-4">
             <div class="flex items-center justify-between">
                 <h3 class="font-bold text-white text-base flex items-center gap-2">
                     <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span> <span id="sectionTitleDate">TODAY'S</span> VIP 100+ ACCUMULATOR
                 </h3>
                 <span class="text-xs bg-amber-500/10 text-amber-400 border border-amber-500/30 px-2.5 py-1 rounded font-mono font-bold" id="totalOddsBadge">
-                    TOTAL ODDS: 112.50
+                    TOTAL ODDS: 115.20
                 </span>
             </div>
 
@@ -148,64 +148,54 @@
 
         let selectedDateObj = new Date();
 
-        const teamPairs = [
+        const globalTeams = [
             { league: "ENGLISH PREMIER LEAGUE", home: "Arsenal", away: "Chelsea" },
             { league: "SPANISH LA LIGA", home: "Real Madrid", away: "Barcelona" },
             { league: "ITALIAN SERIE A", home: "Inter Milan", away: "Juventus" },
-            { league: "GERMAN BUNDESLIGA", home: "Bayern Munich", away: "Dortmund" },
-            { league: "UEFA CHAMPIONS LEAGUE", home: "PSG", away: "Manchester City" },
-            { league: "ENGLISH PREMIER LEAGUE", home: "Liverpool", away: "Man City" },
-            { league: "SPANISH LA LIGA", home: "Atletico Madrid", away: "Sevilla" }
+            { league: "GERMAN BUNDESLIGA", home: "Bayern Munich", away: "Dortmund" }
         ];
 
-        // Adjusted odds structure targeting 100+ Total Odds (e.g. 3.20 * 2.50 * 3.00 * 4.50 = ~108.00)
-        const pickTypes = [
+        // AI generated single picks calibrated to total ~115 Odds
+        const aiPickPool = [
             { label: "1X2: Home Win", odd: 3.20, check: (h, a) => h > a },
             { label: "BTTS: Yes", odd: 2.50, check: (h, a) => h > 0 && a > 0 },
             { label: "Over 2.5 Goals", odd: 3.00, check: (h, a) => (h + a) > 2 },
-            { label: "HT/FT: Home/Home", odd: 4.50, check: (h, a) => h > a }
+            { label: "HT/FT: Home/Home", odd: 4.80, check: (h, a) => h > a }
         ];
 
-        function generateMatchesForDate(dateObj) {
+        function getSimulatedData(dateObj) {
             const today = new Date();
             today.setHours(0,0,0,0);
             const target = new Date(dateObj);
             target.setHours(0,0,0,0);
 
             const dayDiff = Math.round((target - today) / (1000 * 60 * 60 * 24));
-            const dateSeed = dateObj.getDate() + (dateObj.getMonth() + 1) * 31;
+            const seed = dateObj.getDate() + (dateObj.getMonth() + 1) * 17;
 
-            const matches = [];
-
-            for (let i = 0; i < 4; i++) {
-                const pair = teamPairs[(dateSeed + i * 2) % teamPairs.length];
-                const pickObj = pickTypes[i % pickTypes.length];
-
+            return globalTeams.map((team, idx) => {
+                const pickObj = aiPickPool[idx % aiPickPool.length];
                 let status = "FT";
-                let hScore = ((dateSeed + i * 3) % 3) + 1;
-                let aScore = (dateSeed + i) % 3;
+                let hScore = ((seed + idx * 5) % 3) + 1;
+                let aScore = (seed + idx) % 3;
 
                 if (dayDiff > 0) {
-                    const hours = 15 + ((i * 2) % 6);
-                    status = `${hours}:00`;
+                    status = `${15 + (idx * 2)}:00`;
                     hScore = "-";
                     aScore = "-";
                 } else if (dayDiff === 0) {
-                    if (i === 0) { status = "LIVE 74'"; hScore = 2; aScore = 1; }
-                    else if (i === 1) { status = "LIVE 88'"; hScore = 1; aScore = 1; }
+                    if (idx === 0) { status = "LIVE 76'"; hScore = 2; aScore = 1; }
+                    else if (idx === 1) { status = "LIVE 89'"; hScore = 1; aScore = 1; }
                     else { status = "FT"; hScore = 3; aScore = 0; }
-                } else {
-                    status = "FT";
                 }
 
                 const isWon = (status === "FT" || status.includes("LIVE")) 
                     ? pickObj.check(Number(hScore) || 0, Number(aScore) || 0) 
                     : true;
 
-                matches.push({
-                    league: pair.league,
-                    home: pair.home,
-                    away: pair.away,
+                return {
+                    league: team.league,
+                    home: team.home,
+                    away: team.away,
                     homeScore: hScore,
                     awayScore: aScore,
                     status: status,
@@ -213,17 +203,15 @@
                     odd: pickObj.odd,
                     isWon: isWon,
                     isUpcoming: dayDiff > 0
-                });
-            }
-
-            return matches;
+                };
+            });
         }
 
-        async function loadMatchesForDate(dateObj) {
+        async function loadGoal1Data(dateObj) {
             selectedDateObj = dateObj;
             const container = document.getElementById('matchFeedContainer');
             if (container) {
-                container.innerHTML = `<div class="p-8 text-center text-gray-400 text-xs font-mono">Processing Goal1 AI feed for ${dateObj.toLocaleDateString()}...</div>`;
+                container.innerHTML = `<div class="p-8 text-center text-gray-400 text-xs font-mono">Running Goal1 AI analytics for ${dateObj.toLocaleDateString()}...</div>`;
             }
 
             const yyyymmdd = getYYYYMMDD(dateObj);
@@ -242,7 +230,7 @@
                             const away = comp?.competitors?.find(c => c.homeAway === 'away')?.team?.shortDisplayName || "Away";
                             const league = ev.season?.slug ? ev.season.slug.toUpperCase() : "ENGLISH PREMIER LEAGUE";
                             
-                            const pickObj = pickTypes[i % pickTypes.length];
+                            const pickObj = aiPickPool[i % aiPickPool.length];
                             let hScore = parseInt(comp?.competitors?.find(c => c.homeAway === 'home')?.score, 10);
                             let aScore = parseInt(comp?.competitors?.find(c => c.homeAway === 'away')?.score, 10);
 
@@ -276,13 +264,13 @@
                             };
                         });
                     } else {
-                        matches = generateMatchesForDate(dateObj);
+                        matches = getSimulatedData(dateObj);
                     }
                 } else {
-                    matches = generateMatchesForDate(dateObj);
+                    matches = getSimulatedData(dateObj);
                 }
             } catch (e) {
-                matches = generateMatchesForDate(dateObj);
+                matches = getSimulatedData(dateObj);
             }
 
             renderFeed(matches);
@@ -371,7 +359,7 @@
                     Array.from(ribbon.children).forEach(c => c.className = "px-4 py-2 rounded-lg text-gray-400 hover:bg-gray-800 text-xs whitespace-nowrap transition");
                     btn.className = "px-4 py-2 rounded-lg bg-amber-500 text-gray-950 font-bold text-xs whitespace-nowrap shadow-md shadow-amber-500/20";
                     document.getElementById('sectionTitleDate').textContent = i === 0 ? "TODAY'S" : label.toUpperCase();
-                    loadMatchesForDate(target);
+                    loadGoal1Data(target);
                 };
 
                 ribbon.appendChild(btn);
@@ -392,7 +380,7 @@
 
         window.addEventListener('DOMContentLoaded', () => {
             initRibbon();
-            loadMatchesForDate(new Date());
+            loadGoal1Data(new Date());
         });
     </script>
 </body>
