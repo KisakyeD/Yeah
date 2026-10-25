@@ -82,25 +82,6 @@
 
     <main class="flex-grow max-w-4xl w-full mx-auto px-4 py-6 space-y-6">
 
-        <!-- Status Banner -->
-        <div class="bg-gradient-to-r from-amber-950/40 via-yellow-900/20 to-amber-950/40 border border-amber-500/30 rounded-2xl p-4 flex flex-col md:flex-row items-center justify-between gap-4 shadow-xl">
-            <div class="flex items-center space-x-3">
-                <div class="p-3 bg-amber-500/10 rounded-xl border border-amber-500/20 text-amber-400 font-mono text-xs font-bold">VIP SYNC</div>
-                <div>
-                    <h2 class="font-bold text-amber-300 text-sm">Global Match Engine & Live Auto-Refresh</h2>
-                    <p class="text-xs text-gray-400">Scanning worldwide leagues for high-value 100+ odds accumulators.</p>
-                </div>
-            </div>
-            <div class="flex items-center gap-2">
-                <span id="autoRefreshCountdown" class="text-[11px] font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-3 py-1.5 rounded-xl font-bold flex items-center gap-1.5">
-                    <span class="w-2 h-2 rounded-full bg-emerald-400 pulse-live"></span> AUTO: <span id="countdownSecs">30</span>s
-                </span>
-                <button onclick="manualRefresh()" class="bg-amber-500 hover:bg-amber-400 text-gray-950 font-black px-4 py-2 rounded-xl text-xs transition shadow-md shadow-amber-500/20">
-                    SYNC NOW
-                </button>
-            </div>
-        </div>
-
         <!-- Date Ribbon (-30 to +30 Days) -->
         <div class="flex items-center justify-between bg-gray-900 border border-gray-800 rounded-xl p-1.5 no-scrollbar overflow-x-auto gap-2" id="dateRibbon"></div>
 
@@ -324,9 +305,6 @@
             
             countdownTimer = setInterval(() => {
                 secondsRemaining--;
-                const elem = document.getElementById('countdownSecs');
-                if (elem) elem.textContent = secondsRemaining;
-
                 if (secondsRemaining <= 0) {
                     secondsRemaining = 30;
                     fetchMatchData(selectedDateObj, true);
@@ -336,8 +314,6 @@
 
         function resetAutoRefreshCountdown() {
             secondsRemaining = 30;
-            const elem = document.getElementById('countdownSecs');
-            if (elem) elem.textContent = secondsRemaining;
         }
 
         function manualRefresh() {
