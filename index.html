@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WINS1 VIP | Deep AI Football Analytics & 400+ Odds</title>
+    <title>WINS1 VIP | Goal1 Live Analytics & 100+ Odds</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -45,7 +45,7 @@
             </div>
             <nav class="space-y-2">
                 <a href="#" onclick="toggleDrawer(false)" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl bg-amber-500/10 text-amber-400 font-semibold text-xs border border-amber-500/20">
-                    <span>VIP 400+ Accumulator</span>
+                    <span>VIP 100+ Accumulator</span>
                 </a>
                 <a href="https://one.exnessonelink.com/a/m3alh1ljmu?source=app" target="_blank" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl text-gray-400 hover:text-white hover:bg-gray-800 font-medium text-xs transition">
                     <span>Trade Exness Markets</span>
@@ -103,10 +103,10 @@
         <section class="space-y-4">
             <div class="flex items-center justify-between">
                 <h3 class="font-bold text-white text-base flex items-center gap-2">
-                    <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span> <span id="sectionTitleDate">TODAY'S</span> VIP 400+ ACCUMULATOR
+                    <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span> <span id="sectionTitleDate">TODAY'S</span> VIP 100+ ACCUMULATOR
                 </h3>
                 <span class="text-xs bg-amber-500/10 text-amber-400 border border-amber-500/30 px-2.5 py-1 rounded font-mono font-bold" id="totalOddsBadge">
-                    TOTAL ODDS: 423.36
+                    TOTAL ODDS: 112.50
                 </span>
             </div>
 
@@ -148,7 +148,6 @@
 
         let selectedDateObj = new Date();
 
-        // Team Database pool for realistic date dynamic generation
         const teamPairs = [
             { league: "ENGLISH PREMIER LEAGUE", home: "Arsenal", away: "Chelsea" },
             { league: "SPANISH LA LIGA", home: "Real Madrid", away: "Barcelona" },
@@ -159,11 +158,12 @@
             { league: "SPANISH LA LIGA", home: "Atletico Madrid", away: "Sevilla" }
         ];
 
+        // Adjusted odds structure targeting 100+ Total Odds (e.g. 3.20 * 2.50 * 3.00 * 4.50 = ~108.00)
         const pickTypes = [
-            { label: "1X2: Home Win", odd: 4.80, check: (h, a) => h > a },
-            { label: "BTTS: Yes", odd: 3.50, check: (h, a) => h > 0 && a > 0 },
-            { label: "Over 2.5 Goals", odd: 4.20, check: (h, a) => (h + a) > 2 },
-            { label: "HT/FT: Home/Home", odd: 6.00, check: (h, a) => h > a }
+            { label: "1X2: Home Win", odd: 3.20, check: (h, a) => h > a },
+            { label: "BTTS: Yes", odd: 2.50, check: (h, a) => h > 0 && a > 0 },
+            { label: "Over 2.5 Goals", odd: 3.00, check: (h, a) => (h + a) > 2 },
+            { label: "HT/FT: Home/Home", odd: 4.50, check: (h, a) => h > a }
         ];
 
         function generateMatchesForDate(dateObj) {
@@ -186,18 +186,15 @@
                 let aScore = (dateSeed + i) % 3;
 
                 if (dayDiff > 0) {
-                    // Future date: Show upcoming with specific kickoff time
                     const hours = 15 + ((i * 2) % 6);
                     status = `${hours}:00`;
                     hScore = "-";
                     aScore = "-";
                 } else if (dayDiff === 0) {
-                    // Today
                     if (i === 0) { status = "LIVE 74'"; hScore = 2; aScore = 1; }
                     else if (i === 1) { status = "LIVE 88'"; hScore = 1; aScore = 1; }
                     else { status = "FT"; hScore = 3; aScore = 0; }
                 } else {
-                    // Past date: Show FT with scores
                     status = "FT";
                 }
 
