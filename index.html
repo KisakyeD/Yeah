@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WINS1 VIP | Goal1 Live Analytics & 100+ Odds</title>
+    <title>WINS1 VIP | Goal1 Live Analytics & Dynamic Odds</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -160,15 +160,30 @@
             { league: "ENGLISH PREMIER LEAGUE", home: "Crystal Palace", away: "Newcastle" },
             { league: "SPANISH LA LIGA", home: "Real Madrid", away: "Barcelona" },
             { league: "ITALIAN SERIE A", home: "Inter Milan", away: "Juventus" },
-            { league: "GERMAN BUNDESLIGA", home: "Bayern Munich", away: "Dortmund" }
+            { league: "GERMAN BUNDESLIGA", home: "Bayern Munich", away: "Dortmund" },
+            { league: "UEFA CHAMPIONS LEAGUE", home: "PSG", away: "Man City" },
+            { league: "ENGLISH PREMIER LEAGUE", home: "Liverpool", away: "Arsenal" }
         ];
 
         const aiPickPool = [
-            { label: "1X2: Home Win", odd: 3.20, check: (h, a) => h > a },
-            { label: "BTTS: Yes", odd: 2.50, check: (h, a) => h > 0 && a > 0 },
-            { label: "Over 2.5 Goals", odd: 3.00, check: (h, a) => (h + a) > 2 },
-            { label: "HT/FT: Home/Home", odd: 4.80, check: (h, a) => h > a }
+            { label: "1X2: Home Win", check: (h, a) => h > a },
+            { label: "BTTS: Yes", check: (h, a) => h > 0 && a > 0 },
+            { label: "Over 2.5 Goals", check: (h, a) => (h + a) > 2 },
+            { label: "HT/FT: Home/Home", check: (h, a) => h > a }
         ];
+
+        // Generates dynamic odds per match based on date seed (aiming for 100+ accumulators overall)
+        function generateOddsForDate(seed, index) {
+            const baseOdds = [
+                [3.10, 2.45, 3.20, 4.50],
+                [2.85, 2.60, 3.40, 4.20],
+                [3.30, 2.30, 2.90, 5.00],
+                [3.00, 2.50, 3.10, 4.60]
+            ];
+            const setIndex = seed % baseOdds.length;
+            const variation = ((seed * (index + 1)) % 15) / 100;
+            return parseFloat((baseOdds[setIndex][index % 4] + variation).toFixed(2));
+        }
 
         function getSimulatedData(dateObj) {
             const today = new Date();
@@ -177,10 +192,14 @@
             target.setHours(0,0,0,0);
 
             const dayDiff = Math.round((target - today) / (1000 * 60 * 60 * 24));
-            const seed = dateObj.getDate() + (dateObj.getMonth() + 1) * 17;
+            const seed = dateObj.getDate() + (dateObj.getMonth() + 1) * 31;
 
-            return globalTeams.map((team, idx) => {
+            return [0, 1, 2, 3].map((idx) => {
+                const teamIndex = (seed + idx) % globalTeams.length;
+                const team = globalTeams[teamIndex];
                 const pickObj = aiPickPool[idx % aiPickPool.length];
+                const dynamicOdd = generateOddsForDate(seed, idx);
+
                 let status = "FT";
                 let hScore = ((seed + idx * 5) % 3) + 1;
                 let aScore = (seed + idx) % 3;
@@ -209,7 +228,7 @@
                     awayScore: aScore,
                     status: status,
                     pick: pickObj.label,
-                    odd: pickObj.odd,
+                    odd: dynamicOdd,
                     isWon: isWon,
                     isUpcoming: dayDiff > 0 || status === "UPCOMING"
                 };
@@ -238,6 +257,7 @@
 
             const yyyymmdd = getYYYYMMDD(dateObj);
             const espnUrl = `https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard?dates=${yyyymmdd}`;
+            const seed = dateObj.getDate() + (dateObj.getMonth() + 1) * 31;
 
             let matches = [];
 
@@ -253,6 +273,8 @@
                             const league = ev.season?.slug ? ev.season.slug.toUpperCase() : "ENGLISH PREMIER LEAGUE";
                             
                             const pickObj = aiPickPool[i % aiPickPool.length];
+                            const dynamicOdd = generateOddsForDate(seed, i);
+
                             let hScore = comp?.competitors?.find(c => c.homeAway === 'home')?.score;
                             let aScore = comp?.competitors?.find(c => c.homeAway === 'away')?.score;
 
@@ -284,7 +306,7 @@
                                 awayScore: aScore,
                                 status,
                                 pick: pickObj.label,
-                                odd: pickObj.odd,
+                                odd: dynamicOdd,
                                 isWon,
                                 isUpcoming: status === "UPCOMING"
                             };
@@ -308,7 +330,7 @@
             if (!container) return;
             container.innerHTML = '';
             
-            // Dynamically calculate total odds by multiplying all match odds together
+            // Re-calculates exact cumulative total odds dynamically whenever date or feed changes
             let totalOdds = matches.reduce((acc, m) => acc * m.odd, 1.0);
 
             matches.forEach(m => {
