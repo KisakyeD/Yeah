@@ -1,387 +1,278 @@
-<!DOCTYPE html>
-<html lang="en" class="dark">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WINS1 VIP | Goal1 Live Analytics & 100+ Odds</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: { vip: { gold: '#f59e0b', darkGold: '#b45309' } }
-                }
-            }
-        }
-    </script>
-    <style>
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        .pulse-live { animation: pulse-ring 1.5s cubic-bezier(0.215, 0.61, 0.355, 1) infinite; }
-        @keyframes pulse-ring {
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
-            70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
-            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
-        }
-    </style>
-</head>
-<body class="bg-gray-950 text-gray-100 min-h-screen flex flex-col font-sans transition-colors duration-300">
+(function () {
+    // Target container setup
+    const app = document.getElementById('app') || document.body;
 
-    <!-- Drawer Backdrop -->
-    <div id="drawerBackdrop" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden"></div>
+    let selectedDateObj = new Date();
 
-    <!-- Slide-out Navigation Drawer -->
-    <aside id="drawerMenu" class="fixed top-0 left-0 bottom-0 w-72 bg-gray-900 border-r border-gray-800 z-50 transform -translate-x-full transition-transform duration-300 flex flex-col justify-between p-4">
-        <div class="space-y-6">
-            <div class="flex items-center justify-between pb-4 border-b border-gray-800">
-                <div class="flex items-center space-x-3">
-                    <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-amber-500 to-yellow-300 flex items-center justify-center font-black text-gray-950 text-base shadow-lg shadow-amber-500/10">W1</div>
-                    <span class="font-extrabold text-base text-white">WINS1 <span class="text-amber-400">VIP</span></span>
-                </div>
-                <button id="closeDrawerBtn" class="p-2 rounded-lg bg-gray-800 text-gray-400 hover:text-white">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                </button>
-            </div>
-            <nav class="space-y-2">
-                <a href="#" onclick="toggleDrawer(false)" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl bg-amber-500/10 text-amber-400 font-semibold text-xs border border-amber-500/20">
-                    <span>VIP 100+ Accumulator</span>
-                </a>
-                <a href="https://one.exnessonelink.com/a/m3alh1ljmu?source=app" target="_blank" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl text-gray-400 hover:text-white hover:bg-gray-800 font-medium text-xs transition">
-                    <span>Trade Exness Markets</span>
-                </a>
-            </nav>
-        </div>
-        <div class="pt-4 border-t border-gray-800 text-center">
-            <span class="text-[10px] text-gray-500 font-mono">Goal1 Engine &bull; AI Analysis Active</span>
-        </div>
-    </aside>
+    const teamPool = [
+        { league: "ENGLISH PREMIER LEAGUE", home: "Arsenal", away: "Chelsea" },
+        { league: "SPANISH LA LIGA", home: "Real Madrid", away: "Barcelona" },
+        { league: "ITALIAN SERIE A", home: "Inter Milan", away: "Juventus" },
+        { league: "GERMAN BUNDESLIGA", home: "Bayern Munich", away: "Dortmund" }
+    ];
 
-    <!-- Header Navigation -->
-    <header class="sticky top-0 z-40 bg-gray-900/90 border-b border-gray-800 px-4 py-3 backdrop-blur-md">
-        <div class="max-w-4xl mx-auto flex items-center justify-between">
-            <div class="flex items-center space-x-3">
-                <button id="openDrawerBtn" class="p-2 rounded-lg bg-gray-800 border border-gray-700 text-gray-300 hover:text-white">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-                </button>
-                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-amber-500 to-yellow-300 flex items-center justify-center font-black text-gray-950 text-lg">W1</div>
-                <div>
-                    <div class="flex items-center space-x-2">
-                        <h1 class="font-extrabold text-lg text-white">WINS1 <span class="text-amber-400">VIP</span></h1>
-                        <span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
-                            <span class="w-2 h-2 rounded-full bg-emerald-400 pulse-live"></span> GOAL1 LIVE
-                        </span>
-                    </div>
-                </div>
-            </div>
-            <button id="themeToggleBtn" class="p-2 rounded-lg bg-gray-800 border border-gray-700 text-gray-300 hover:text-white">
-                <span id="themeIcon">☀️</span>
-            </button>
-        </div>
-    </header>
+    const pickCatalog = [
+        { label: "1X2: Home Win", odd: 3.20, check: (h, a) => h > a },
+        { label: "BTTS: Yes", odd: 2.50, check: (h, a) => h > 0 && a > 0 },
+        { label: "Over 2.5 Goals", odd: 3.00, check: (h, a) => (h + a) > 2 },
+        { label: "HT/FT: Home/Home", odd: 4.80, check: (h, a) => h > a }
+    ];
 
-    <main class="flex-grow max-w-4xl w-full mx-auto px-4 py-6 space-y-6">
+    function getYYYYMMDD(d) {
+        return d.getFullYear() + String(d.getMonth() + 1).padStart(2, '0') + String(d.getDate()).padStart(2, '0');
+    }
 
-        <!-- Status Banner -->
-        <div class="bg-gradient-to-r from-amber-950/40 via-yellow-900/20 to-amber-950/40 border border-amber-500/30 rounded-2xl p-4 flex flex-col md:flex-row items-center justify-between gap-4 shadow-xl">
-            <div class="flex items-center space-x-3">
-                <div class="p-3 bg-amber-500/10 rounded-xl border border-amber-500/20 text-amber-400 font-mono text-xs font-bold">AI SYNC</div>
-                <div>
-                    <h2 class="font-bold text-amber-300 text-sm">Goal1 Neural Match Engine & AI Feed</h2>
-                    <p class="text-xs text-gray-400">Real-time fixture analysis and probability calculations.</p>
-                </div>
-            </div>
-            <button onclick="loadGoal1Data(selectedDateObj)" class="bg-amber-500 hover:bg-amber-400 text-gray-950 font-black px-4 py-2 rounded-xl text-xs transition shadow-md shadow-amber-500/20">
-                SYNC GOAL1
-            </button>
-        </div>
-
-        <!-- Date Ribbon (-30 to +30 Days) -->
-        <div class="flex items-center justify-between bg-gray-900 border border-gray-800 rounded-xl p-1.5 no-scrollbar overflow-x-auto gap-2" id="dateRibbon"></div>
-
-        <!-- Ticket Section -->
-        <section class="space-y-4">
-            <div class="flex items-center justify-between">
-                <h3 class="font-bold text-white text-base flex items-center gap-2">
-                    <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span> <span id="sectionTitleDate">TODAY'S</span> VIP 100+ ACCUMULATOR
-                </h3>
-                <span class="text-xs bg-amber-500/10 text-amber-400 border border-amber-500/30 px-2.5 py-1 rounded font-mono font-bold" id="totalOddsBadge">
-                    TOTAL ODDS: 115.20
-                </span>
-            </div>
-
-            <div class="grid grid-cols-1 gap-3" id="matchFeedContainer"></div>
-        </section>
-    </main>
-
-    <!-- Footer -->
-    <footer class="bg-gray-900 border-t border-gray-800 py-6 px-4 text-center mt-auto">
-        <p class="text-xs text-gray-400">
-            Sponsored by <a href="https://one.exnessonelink.com/a/m3alh1ljmu?source=app" target="_blank" class="text-amber-400 font-semibold underline">Exness Global Markets</a>
-        </p>
-    </footer>
-
-    <script>
-        const openDrawerBtn = document.getElementById('openDrawerBtn');
-        const closeDrawerBtn = document.getElementById('closeDrawerBtn');
-        const drawerMenu = document.getElementById('drawerMenu');
-        const drawerBackdrop = document.getElementById('drawerBackdrop');
-
-        function toggleDrawer(open) {
-            if (!drawerMenu || !drawerBackdrop) return;
-            if (open) {
-                drawerBackdrop.classList.remove('hidden');
-                drawerMenu.classList.remove('-translate-x-full');
-            } else {
-                drawerMenu.classList.add('-translate-x-full');
-                drawerBackdrop.classList.add('hidden');
-            }
-        }
-
-        if (openDrawerBtn) openDrawerBtn.addEventListener('click', () => toggleDrawer(true));
-        if (closeDrawerBtn) closeDrawerBtn.addEventListener('click', () => toggleDrawer(false));
-        if (drawerBackdrop) drawerBackdrop.addEventListener('click', () => toggleDrawer(false));
-
-        function getYYYYMMDD(d) {
-            return d.getFullYear() + String(d.getMonth() + 1).padStart(2, '0') + String(d.getDate()).padStart(2, '0');
-        }
-
-        let selectedDateObj = new Date();
-
-        const globalTeams = [
-            { league: "ENGLISH PREMIER LEAGUE", home: "Arsenal", away: "Chelsea" },
-            { league: "SPANISH LA LIGA", home: "Real Madrid", away: "Barcelona" },
-            { league: "ITALIAN SERIE A", home: "Inter Milan", away: "Juventus" },
-            { league: "GERMAN BUNDESLIGA", home: "Bayern Munich", away: "Dortmund" }
-        ];
-
-        // AI generated single picks calibrated to total ~115 Odds
-        const aiPickPool = [
-            { label: "1X2: Home Win", odd: 3.20, check: (h, a) => h > a },
-            { label: "BTTS: Yes", odd: 2.50, check: (h, a) => h > 0 && a > 0 },
-            { label: "Over 2.5 Goals", odd: 3.00, check: (h, a) => (h + a) > 2 },
-            { label: "HT/FT: Home/Home", odd: 4.80, check: (h, a) => h > a }
-        ];
-
-        function getSimulatedData(dateObj) {
-            const today = new Date();
-            today.setHours(0,0,0,0);
-            const target = new Date(dateObj);
-            target.setHours(0,0,0,0);
-
-            const dayDiff = Math.round((target - today) / (1000 * 60 * 60 * 24));
-            const seed = dateObj.getDate() + (dateObj.getMonth() + 1) * 17;
-
-            return globalTeams.map((team, idx) => {
-                const pickObj = aiPickPool[idx % aiPickPool.length];
-                let status = "FT";
-                let hScore = ((seed + idx * 5) % 3) + 1;
-                let aScore = (seed + idx) % 3;
-
-                if (dayDiff > 0) {
-                    status = `${15 + (idx * 2)}:00`;
-                    hScore = "-";
-                    aScore = "-";
-                } else if (dayDiff === 0) {
-                    if (idx === 0) { status = "LIVE 76'"; hScore = 2; aScore = 1; }
-                    else if (idx === 1) { status = "LIVE 89'"; hScore = 1; aScore = 1; }
-                    else { status = "FT"; hScore = 3; aScore = 0; }
-                }
-
-                const isWon = (status === "FT" || status.includes("LIVE")) 
-                    ? pickObj.check(Number(hScore) || 0, Number(aScore) || 0) 
-                    : true;
-
-                return {
-                    league: team.league,
-                    home: team.home,
-                    away: team.away,
-                    homeScore: hScore,
-                    awayScore: aScore,
-                    status: status,
-                    pick: pickObj.label,
-                    odd: pickObj.odd,
-                    isWon: isWon,
-                    isUpcoming: dayDiff > 0
-                };
-            });
-        }
-
-        async function loadGoal1Data(dateObj) {
-            selectedDateObj = dateObj;
-            const container = document.getElementById('matchFeedContainer');
-            if (container) {
-                container.innerHTML = `<div class="p-8 text-center text-gray-400 text-xs font-mono">Running Goal1 AI analytics for ${dateObj.toLocaleDateString()}...</div>`;
-            }
-
-            const yyyymmdd = getYYYYMMDD(dateObj);
-            const espnUrl = `https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard?dates=${yyyymmdd}`;
-
-            let matches = [];
-
-            try {
-                const res = await fetch(espnUrl);
-                if (res.ok) {
-                    const json = await res.json();
-                    if (json && json.events && json.events.length >= 4) {
-                        matches = json.events.slice(0, 4).map((ev, i) => {
-                            const comp = ev.competitions?.[0];
-                            const home = comp?.competitors?.find(c => c.homeAway === 'home')?.team?.shortDisplayName || "Home";
-                            const away = comp?.competitors?.find(c => c.homeAway === 'away')?.team?.shortDisplayName || "Away";
-                            const league = ev.season?.slug ? ev.season.slug.toUpperCase() : "ENGLISH PREMIER LEAGUE";
-                            
-                            const pickObj = aiPickPool[i % aiPickPool.length];
-                            let hScore = parseInt(comp?.competitors?.find(c => c.homeAway === 'home')?.score, 10);
-                            let aScore = parseInt(comp?.competitors?.find(c => c.homeAway === 'away')?.score, 10);
-
-                            const state = ev.status?.type?.state;
-                            let status = ev.status?.type?.detail || "FT";
-
-                            if (state === "pre") {
-                                status = ev.status?.type?.shortDetail || "UPCOMING";
-                                hScore = "-";
-                                aScore = "-";
-                            } else if (state === "in") {
-                                status = `LIVE ${ev.status?.displayClock || ''}`;
-                            } else {
-                                status = "FT";
-                            }
-
-                            if (isNaN(hScore)) hScore = (i % 2 === 0) ? 2 : 1;
-                            if (isNaN(aScore)) aScore = 1;
-
-                            const isWon = state === "pre" ? true : pickObj.check(hScore, aScore);
-
-                            return {
-                                league, home, away,
-                                homeScore: hScore,
-                                awayScore: aScore,
-                                status,
-                                pick: pickObj.label,
-                                odd: pickObj.odd,
-                                isWon,
-                                isUpcoming: state === "pre"
-                            };
-                        });
-                    } else {
-                        matches = getSimulatedData(dateObj);
-                    }
-                } else {
-                    matches = getSimulatedData(dateObj);
-                }
-            } catch (e) {
-                matches = getSimulatedData(dateObj);
-            }
-
-            renderFeed(matches);
-        }
-
-        function renderFeed(matches) {
-            const container = document.getElementById('matchFeedContainer');
-            if (!container) return;
-            container.innerHTML = '';
-            let totalOdds = 1.0;
-
-            matches.forEach(m => {
-                totalOdds *= m.odd;
-
-                let badge = "";
-                if (m.isUpcoming || m.status.includes(":")) {
-                    badge = `<span class="bg-amber-500/20 text-amber-400 border border-amber-500/30 text-[10px] font-black px-2 py-0.5 rounded">UPCOMING</span>`;
-                } else if (m.status.includes("LIVE")) {
-                    badge = `<span class="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-black px-2 py-0.5 rounded animate-pulse">LIVE</span>`;
-                } else {
-                    badge = m.isWon
-                        ? `<span class="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-black px-2 py-0.5 rounded">WON</span>`
-                        : `<span class="bg-red-500/20 text-red-400 border border-red-500/30 text-[10px] font-black px-2 py-0.5 rounded">LOST</span>`;
-                }
-
-                const card = document.createElement('div');
-                card.className = "bg-gray-900 border border-gray-800 rounded-xl p-4 flex flex-col md:flex-row items-center justify-between gap-4 hover:border-amber-500/40 transition";
-                card.innerHTML = `
-                    <div class="space-y-1 w-full md:w-auto">
-                        <div class="flex items-center space-x-2 text-xs text-gray-400">
-                            <span class="text-amber-400 font-semibold">${m.league}</span>
-                            <span>•</span>
-                            <span class="${m.status.includes('LIVE') ? 'text-emerald-400 font-bold' : 'text-gray-400'}">${m.status}</span>
-                        </div>
-                        <div class="text-sm font-bold text-white flex items-center space-x-3">
-                            <span>${m.home}</span>
-                            <span class="bg-gray-800 text-amber-400 px-2.5 py-0.5 rounded font-mono text-xs border border-gray-700">
-                                ${m.homeScore} - ${m.awayScore}
+    function renderBaseLayout() {
+        app.innerHTML = `
+            <div class="bg-gray-950 text-gray-100 min-h-screen flex flex-col font-sans">
+                <!-- Header -->
+                <header class="sticky top-0 z-40 bg-gray-900/90 border-b border-gray-800 px-4 py-3 backdrop-blur-md">
+                    <div class="max-w-4xl mx-auto flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-amber-500 to-yellow-300 flex items-center justify-center font-black text-gray-950 text-lg">W1</div>
+                            <h1 class="font-extrabold text-lg text-white">WINS1 <span class="text-amber-400">VIP</span></h1>
+                            <span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
+                                <span class="w-2 h-2 rounded-full bg-emerald-400 pulse-live"></span> GOAL1 LIVE
                             </span>
-                            <span>${m.away}</span>
                         </div>
                     </div>
-                    <div class="flex items-center justify-between w-full md:w-auto gap-4 border-t md:border-0 border-gray-800 pt-2 md:pt-0">
-                        <div class="text-left md:text-right flex items-center space-x-2">
-                            <div>
-                                <span class="text-[10px] text-gray-400 block font-mono">SINGLE PICK</span>
-                                <span class="text-xs font-bold text-amber-400 bg-amber-500/10 px-2.5 py-0.5 rounded border border-amber-500/20">${m.pick}</span>
-                            </div>
-                            ${badge}
-                        </div>
-                        <div class="text-right">
-                            <span class="text-[10px] text-gray-400 block font-mono">ODDS</span>
-                            <span class="text-sm font-extrabold text-white font-mono">${m.odd.toFixed(2)}</span>
-                        </div>
-                    </div>
-                `;
-                container.appendChild(card);
-            });
+                </header>
 
-            const oddsBadge = document.getElementById('totalOddsBadge');
-            if (oddsBadge) oddsBadge.textContent = `TOTAL ODDS: ${totalOdds.toFixed(2)}`;
+                <main class="flex-grow max-w-4xl w-full mx-auto px-4 py-6 space-y-6">
+                    <!-- Date Ribbon -->
+                    <div id="dateRibbon" class="flex items-center justify-between bg-gray-900 border border-gray-800 rounded-xl p-1.5 no-scrollbar overflow-x-auto gap-2"></div>
+
+                    <!-- VIP Ticket Section -->
+                    <section class="space-y-4">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-bold text-white text-base flex items-center gap-2">
+                                <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span> <span id="sectionTitleDate">TODAY'S</span> VIP 100+ ACCUMULATOR
+                            </h3>
+                            <span id="totalOddsBadge" class="text-xs bg-amber-500/10 text-amber-400 border border-amber-500/30 px-2.5 py-1 rounded font-mono font-bold">TOTAL ODDS: 115.20</span>
+                        </div>
+
+                        <div id="matchFeedContainer" class="grid grid-cols-1 gap-3"></div>
+                    </section>
+                </main>
+
+                <!-- Footer -->
+                <footer class="bg-gray-900 border-t border-gray-800 py-6 px-4 text-center mt-auto">
+                    <p class="text-xs text-gray-400">Sponsored by <a href="https://one.exnessonelink.com/a/m3alh1ljmu?source=app" target="_blank" class="text-amber-400 font-semibold underline">Exness Global Markets</a></p>
+                </footer>
+            </div>
+        `;
+    }
+
+    function initRibbon() {
+        const ribbon = document.getElementById('dateRibbon');
+        if (!ribbon) return;
+
+        const today = new Date();
+        let todayBtn = null;
+        ribbon.innerHTML = '';
+
+        for (let i = -30; i <= 30; i++) {
+            const target = new Date(today);
+            target.setDate(today.getDate() + i);
+            const label = target.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+            const btn = document.createElement('button');
+            btn.className = i === 0 
+                ? "px-4 py-2 rounded-lg bg-amber-500 text-gray-950 font-bold text-xs whitespace-nowrap shadow-md shadow-amber-500/20" 
+                : "px-4 py-2 rounded-lg text-gray-400 hover:bg-gray-800 text-xs whitespace-nowrap transition";
+            btn.textContent = i === 0 ? `Today (${label})` : label;
+
+            if (i === 0) todayBtn = btn;
+
+            btn.onclick = () => {
+                Array.from(ribbon.children).forEach(c => c.className = "px-4 py-2 rounded-lg text-gray-400 hover:bg-gray-800 text-xs whitespace-nowrap transition");
+                btn.className = "px-4 py-2 rounded-lg bg-amber-500 text-gray-950 font-bold text-xs whitespace-nowrap shadow-md shadow-amber-500/20";
+                document.getElementById('sectionTitleDate').textContent = i === 0 ? "TODAY'S" : label.toUpperCase();
+                fetchMatches(target);
+            };
+
+            ribbon.appendChild(btn);
         }
 
-        function initRibbon() {
-            const ribbon = document.getElementById('dateRibbon');
-            if (!ribbon) return;
+        if (todayBtn) {
+            setTimeout(() => todayBtn.scrollIntoView({ behavior: 'smooth', inline: 'center' }), 100);
+        }
+    }
 
-            const today = new Date();
-            let todayBtn = null;
-            ribbon.innerHTML = '';
+    async function fetchMatches(dateObj) {
+        selectedDateObj = dateObj;
+        const container = document.getElementById('matchFeedContainer');
+        if (container) {
+            container.innerHTML = `<div class="p-8 text-center text-gray-400 text-xs font-mono">Syncing Goal1 AI matches for ${dateObj.toLocaleDateString()}...</div>`;
+        }
 
-            for (let i = -30; i <= 30; i++) {
-                const target = new Date(today);
-                target.setDate(today.getDate() + i);
-                const label = target.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        const yyyymmdd = getYYYYMMDD(dateObj);
+        const espnUrl = `https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard?dates=${yyyymmdd}`;
 
-                const btn = document.createElement('button');
-                btn.className = i === 0 
-                    ? "px-4 py-2 rounded-lg bg-amber-500 text-gray-950 font-bold text-xs whitespace-nowrap shadow-md shadow-amber-500/20" 
-                    : "px-4 py-2 rounded-lg text-gray-400 hover:bg-gray-800 text-xs whitespace-nowrap transition";
-                btn.textContent = i === 0 ? `Today (${label})` : label;
+        let matches = [];
 
-                if (i === 0) todayBtn = btn;
+        try {
+            const res = await fetch(espnUrl);
+            if (res.ok) {
+                const json = await res.json();
+                if (json && json.events && json.events.length >= 4) {
+                    matches = json.events.slice(0, 4).map((ev, i) => {
+                        const comp = ev.competitions?.[0];
+                        const home = comp?.competitors?.find(c => c.homeAway === 'home')?.team?.shortDisplayName || "Home";
+                        const away = comp?.competitors?.find(c => c.homeAway === 'away')?.team?.shortDisplayName || "Away";
+                        const league = ev.season?.slug ? ev.season.slug.toUpperCase() : "ENGLISH PREMIER LEAGUE";
+                        
+                        const pickObj = pickCatalog[i % pickCatalog.length];
+                        let hScore = parseInt(comp?.competitors?.find(c => c.homeAway === 'home')?.score, 10);
+                        let aScore = parseInt(comp?.competitors?.find(c => c.homeAway === 'away')?.score, 10);
 
-                btn.onclick = () => {
-                    Array.from(ribbon.children).forEach(c => c.className = "px-4 py-2 rounded-lg text-gray-400 hover:bg-gray-800 text-xs whitespace-nowrap transition");
-                    btn.className = "px-4 py-2 rounded-lg bg-amber-500 text-gray-950 font-bold text-xs whitespace-nowrap shadow-md shadow-amber-500/20";
-                    document.getElementById('sectionTitleDate').textContent = i === 0 ? "TODAY'S" : label.toUpperCase();
-                    loadGoal1Data(target);
-                };
+                        const state = ev.status?.type?.state;
+                        let status = ev.status?.type?.detail || "FT";
 
-                ribbon.appendChild(btn);
+                        if (state === "pre") {
+                            status = ev.status?.type?.shortDetail || "UPCOMING";
+                            hScore = "-";
+                            aScore = "-";
+                        } else if (state === "in") {
+                            status = `LIVE ${ev.status?.displayClock || ''}`;
+                        } else {
+                            status = "FT";
+                        }
+
+                        if (isNaN(hScore)) hScore = (i % 2 === 0) ? 2 : 1;
+                        if (isNaN(aScore)) aScore = 1;
+
+                        const isWon = state === "pre" ? true : pickObj.check(hScore, aScore);
+
+                        return {
+                            league, home, away,
+                            homeScore: hScore,
+                            awayScore: aScore,
+                            status,
+                            pick: pickObj.label,
+                            odd: pickObj.odd,
+                            isWon,
+                            isUpcoming: state === "pre"
+                        };
+                    });
+                } else {
+                    matches = generateFallbackData(dateObj);
+                }
+            } else {
+                matches = generateFallbackData(dateObj);
+            }
+        } catch (e) {
+            matches = generateFallbackData(dateObj);
+        }
+
+        renderFeed(matches);
+    }
+
+    function generateFallbackData(dateObj) {
+        const today = new Date();
+        today.setHours(0,0,0,0);
+        const target = new Date(dateObj);
+        target.setHours(0,0,0,0);
+
+        const dayDiff = Math.round((target - today) / (1000 * 60 * 60 * 24));
+        const seed = dateObj.getDate() + (dateObj.getMonth() + 1) * 17;
+
+        return teamPool.map((team, idx) => {
+            const pickObj = pickCatalog[idx % pickCatalog.length];
+            let status = "FT";
+            let hScore = ((seed + idx * 5) % 3) + 1;
+            let aScore = (seed + idx) % 3;
+
+            if (dayDiff > 0) {
+                status = `${15 + (idx * 2)}:00`;
+                hScore = "-";
+                aScore = "-";
+            } else if (dayDiff === 0) {
+                if (idx === 0) { status = "LIVE 76'"; hScore = 2; aScore = 1; }
+                else if (idx === 1) { status = "LIVE 89'"; hScore = 1; aScore = 1; }
+                else { status = "FT"; hScore = 3; aScore = 0; }
             }
 
-            if (todayBtn) {
-                setTimeout(() => todayBtn.scrollIntoView({ behavior: 'smooth', inline: 'center' }), 100);
-            }
-        }
+            const isWon = (status === "FT" || status.includes("LIVE")) 
+                ? pickObj.check(Number(hScore) || 0, Number(aScore) || 0) 
+                : true;
 
-        const themeToggleBtn = document.getElementById('themeToggleBtn');
-        if (themeToggleBtn) {
-            themeToggleBtn.addEventListener('click', () => {
-                document.documentElement.classList.toggle('dark');
-                document.getElementById('themeIcon').textContent = document.documentElement.classList.contains('dark') ? '☀️' : '🌙';
-            });
-        }
-
-        window.addEventListener('DOMContentLoaded', () => {
-            initRibbon();
-            loadGoal1Data(new Date());
+            return {
+                league: team.league,
+                home: team.home,
+                away: team.away,
+                homeScore: hScore,
+                awayScore: aScore,
+                status: status,
+                pick: pickObj.label,
+                odd: pickObj.odd,
+                isWon: isWon,
+                isUpcoming: dayDiff > 0
+            };
         });
-    </script>
-</body>
-</html>
+    }
+
+    function renderFeed(matches) {
+        const container = document.getElementById('matchFeedContainer');
+        if (!container) return;
+        container.innerHTML = '';
+        let totalOdds = 1.0;
+
+        matches.forEach(m => {
+            totalOdds *= m.odd;
+
+            let badge = "";
+            if (m.isUpcoming || m.status.includes(":")) {
+                badge = `<span class="bg-amber-500/20 text-amber-400 border border-amber-500/30 text-[10px] font-black px-2 py-0.5 rounded">UPCOMING</span>`;
+            } else if (m.status.includes("LIVE")) {
+                badge = `<span class="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-black px-2 py-0.5 rounded animate-pulse">LIVE</span>`;
+            } else {
+                badge = m.isWon
+                    ? `<span class="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-black px-2 py-0.5 rounded">WON</span>`
+                    : `<span class="bg-red-500/20 text-red-400 border border-red-500/30 text-[10px] font-black px-2 py-0.5 rounded">LOST</span>`;
+            }
+
+            const card = document.createElement('div');
+            card.className = "bg-gray-900 border border-gray-800 rounded-xl p-4 flex flex-col md:flex-row items-center justify-between gap-4 hover:border-amber-500/40 transition";
+            card.innerHTML = `
+                <div class="space-y-1 w-full md:w-auto">
+                    <div class="flex items-center space-x-2 text-xs text-gray-400">
+                        <span class="text-amber-400 font-semibold">${m.league}</span>
+                        <span>•</span>
+                        <span class="${m.status.includes('LIVE') ? 'text-emerald-400 font-bold' : 'text-gray-400'}">${m.status}</span>
+                    </div>
+                    <div class="text-sm font-bold text-white flex items-center space-x-3">
+                        <span>${m.home}</span>
+                        <span class="bg-gray-800 text-amber-400 px-2.5 py-0.5 rounded font-mono text-xs border border-gray-700">
+                            ${m.homeScore} - ${m.awayScore}
+                        </span>
+                        <span>${m.away}</span>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between w-full md:w-auto gap-4 border-t md:border-0 border-gray-800 pt-2 md:pt-0">
+                    <div class="text-left md:text-right flex items-center space-x-2">
+                        <div>
+                            <span class="text-[10px] text-gray-400 block font-mono">SINGLE PICK</span>
+                            <span class="text-xs font-bold text-amber-400 bg-amber-500/10 px-2.5 py-0.5 rounded border border-amber-500/20">${m.pick}</span>
+                        </div>
+                        ${badge}
+                    </div>
+                    <div class="text-right">
+                        <span class="text-[10px] text-gray-400 block font-mono">ODDS</span>
+                        <span class="text-sm font-extrabold text-white font-mono">${m.odd.toFixed(2)}</span>
+                    </div>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+
+        const oddsBadge = document.getElementById('totalOddsBadge');
+        if (oddsBadge) oddsBadge.textContent = `TOTAL ODDS: ${totalOdds.toFixed(2)}`;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        renderBaseLayout();
+        initRibbon();
+        fetchMatches(new Date());
+    });
+})();
