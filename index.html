@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WINS1 VIP | 95%+ AI Analytics, Single Picks (2.5+ Odds) & VIP Lock</title>
+    <title>WINS1 VIP | 95%+ AI Analytics, Single Picks (2.5+ Odds) & Live In-Play</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -26,27 +26,10 @@
         }
     </style>
 </head>
-<body id="appBody" class="bg-gray-950 text-gray-100 min-h-screen flex flex-col font-sans transition-colors duration-300">
+<body class="bg-gray-950 text-gray-100 min-h-screen flex flex-col font-sans transition-colors duration-300">
 
     <!-- Drawer Backdrop -->
     <div id="drawerBackdrop" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden"></div>
-
-    <!-- VIP Passcode Modal -->
-    <div id="vipPasscodeModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-gray-900 border border-amber-500/40 rounded-2xl max-w-sm w-full p-6 space-y-4 shadow-2xl text-center">
-            <div class="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center mx-auto text-amber-400 font-bold text-lg">🔒</div>
-            <div class="space-y-1">
-                <h3 class="font-bold text-white text-base">VIP Subscriber Access Required</h3>
-                <p class="text-xs text-gray-400 font-mono">Enter your VIP Passcode to unlock this high-yield tier.</p>
-            </div>
-            <input type="password" id="vipPasscodeInput" placeholder="Enter PIN (e.g. 7777)" class="w-full bg-gray-800 border border-gray-700 text-center text-white tracking-widest font-mono text-sm rounded-xl py-2.5 px-3 focus:outline-none focus:border-amber-500">
-            <div id="passcodeError" class="text-[11px] text-red-400 hidden font-mono">Incorrect PIN. Try '7777'.</div>
-            <div class="flex space-x-2 pt-2">
-                <button onclick="closeVipModal()" class="w-1/2 bg-gray-800 hover:bg-gray-700 text-gray-300 font-bold py-2.5 rounded-xl text-xs transition">Cancel</button>
-                <button onclick="verifyVipPin()" class="w-1/2 bg-amber-500 hover:bg-amber-400 text-gray-950 font-bold py-2.5 rounded-xl text-xs transition shadow-lg shadow-amber-500/20">Unlock VIP</button>
-            </div>
-        </div>
-    </div>
 
     <!-- Slide-out Navigation Drawer -->
     <aside id="drawerMenu" class="fixed top-0 left-0 bottom-0 w-80 bg-gray-900 border-r border-gray-800 z-50 transform -translate-x-full transition-transform duration-300 flex flex-col justify-between p-4 overflow-y-auto no-scrollbar">
@@ -91,12 +74,9 @@
                     <span class="text-[10px] font-mono bg-red-500/20 text-red-300 px-1.5 py-0.5 rounded">95%+ Target</span>
                 </button>
 
-                <div class="text-[10px] font-mono text-gray-400 uppercase tracking-wider px-2 pt-3 flex items-center justify-between">
-                    <span>Core Accumulators</span>
-                    <span class="text-[9px] text-amber-400 font-mono">🔒 VIP PIN LOCKED</span>
-                </div>
-                <button onclick="attemptSwitchCategory('accumulator')" id="nav_accumulator" class="w-full flex items-center justify-between px-3 py-2 rounded-xl bg-amber-500/10 text-amber-400 font-semibold text-xs border border-amber-500/20 transition">
-                    <span class="flex items-center gap-1.5">🔒 VIP 100+ Accumulator</span>
+                <div class="text-[10px] font-mono text-gray-400 uppercase tracking-wider px-2 pt-3">Core Accumulators</div>
+                <button onclick="switchCategory('accumulator')" id="nav_accumulator" class="w-full flex items-center justify-between px-3 py-2 rounded-xl bg-amber-500/10 text-amber-400 font-semibold text-xs border border-amber-500/20 transition">
+                    <span>VIP 100+ Accumulator</span>
                     <span class="text-[10px] font-mono bg-amber-500/20 px-1.5 py-0.5 rounded">95%+ Win</span>
                 </button>
                 <button onclick="switchCategory('btts')" id="nav_btts" class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-gray-400 hover:text-white hover:bg-gray-800 font-medium text-xs transition">
@@ -107,8 +87,8 @@
                     <span>🔥 High-Win Combo Picks</span>
                     <span class="text-[10px] font-mono bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded">95%+ Win</span>
                 </button>
-                <button onclick="attemptSwitchCategory('bigodds')" id="nav_bigodds" class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-gray-400 hover:text-white hover:bg-gray-800 font-medium text-xs transition">
-                    <span class="flex items-center gap-1.5">🔒 Big Odds 600+ AI Ticket</span>
+                <button onclick="switchCategory('bigodds')" id="nav_bigodds" class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-gray-400 hover:text-white hover:bg-gray-800 font-medium text-xs transition">
+                    <span>⚡ Big Odds 600+ AI Ticket</span>
                     <span class="text-[10px] font-mono bg-purple-500/20 text-purple-400 px-1.5 py-0.5 rounded">95%+ Win</span>
                 </button>
 
@@ -150,7 +130,7 @@
 
                 <div class="text-[10px] font-mono text-gray-400 uppercase tracking-wider px-2 pt-3">Tools & External</div>
                 <button onclick="openSettingsModal()" class="w-full flex items-center space-x-3 px-3 py-2 rounded-xl text-gray-400 hover:text-white hover:bg-gray-800 font-medium text-xs transition text-left">
-                    <span>⚙️ Settings & Themes</span>
+                    <span>⚙️ Settings & Odds Format</span>
                 </button>
                 <a href="https://one.exnessonelink.com/a/m3alh1ljmu?source=app" target="_blank" class="flex items-center space-x-3 px-3 py-2 rounded-xl text-gray-400 hover:text-white hover:bg-gray-800 font-medium text-xs transition">
                     <span>📈 Trade Exness Markets</span>
@@ -166,32 +146,31 @@
 
         <div class="pt-4 border-t border-gray-800 text-center my-2">
             <span class="text-[10px] text-emerald-400 font-mono block font-bold">95%+ AI Precision Engine Active</span>
-            <span class="text-[9px] text-gray-500 font-mono">WINS1 Predictive Model v8.5</span>
+            <span class="text-[9px] text-gray-500 font-mono">WINS1 Predictive Model v8.0</span>
         </div>
     </aside>
 
-    <!-- Settings & Themes Modal -->
+    <!-- Settings Modal -->
     <div id="settingsModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-gray-900 border border-gray-800 rounded-2xl max-w-sm w-full p-6 space-y-4 shadow-2xl">
             <div class="flex items-center justify-between pb-3 border-b border-gray-800">
-                <h3 class="font-bold text-white text-sm">Settings & Color Themes</h3>
+                <h3 class="font-bold text-white text-sm">Application Settings</h3>
                 <button onclick="closeSettingsModal()" class="text-gray-400 hover:text-white">✕</button>
             </div>
             <div class="space-y-3 text-xs">
-                <div>
-                    <label class="text-gray-400 block mb-1">Color Theme Accent</label>
-                    <select id="settingThemeAccent" onchange="applyThemeAccent(this.value)" class="w-full bg-gray-800 border border-gray-700 text-gray-200 rounded-xl p-2.5">
-                        <option value="amber">Classic Gold / Amber</option>
-                        <option value="emerald">Neon Emerald (Green)</option>
-                        <option value="purple">Cyberpunk Purple</option>
-                        <option value="cyan">Matrix Cyan</option>
-                    </select>
-                </div>
                 <div>
                     <label class="text-gray-400 block mb-1">Odds Format</label>
                     <select id="settingOddsFormat" class="w-full bg-gray-800 border border-gray-700 text-gray-200 rounded-xl p-2.5">
                         <option value="decimal">Decimal (1.85)</option>
                         <option value="fractional">Fractional (4/5)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="text-gray-400 block mb-1">Target Multiplier Limit</label>
+                    <select id="settingBigOddsTarget" class="w-full bg-gray-800 border border-gray-700 text-gray-200 rounded-xl p-2.5">
+                        <option value="600" selected>Big Odds Mode (600+ Target)</option>
+                        <option value="100">Standard VIP Multiplier (100+ Target)</option>
+                        <option value="50">Ultra Safe Odds (50+ Target)</option>
                     </select>
                 </div>
                 <div>
@@ -219,7 +198,7 @@
                 <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-amber-500 to-yellow-300 flex items-center justify-center font-black text-gray-950 text-lg">W1</div>
                 <div>
                     <div class="flex items-center space-x-2">
-                        <h1 class="font-extrabold text-lg text-white">WINS1 <span class="text-amber-400" id="brandTitleAccent">VIP</span></h1>
+                        <h1 class="font-extrabold text-lg text-white">WINS1 <span class="text-amber-400">VIP</span></h1>
                         <span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
                             <span class="w-2 h-2 rounded-full bg-emerald-400 pulse-live"></span> <span id="headerCategoryBadge">VIP 100+ ACCUMULATOR</span>
                         </span>
@@ -237,37 +216,6 @@
         <!-- Date Ribbon (-30 to +30 Days) -->
         <div class="flex items-center justify-between bg-gray-900 border border-gray-800 rounded-xl p-1.5 no-scrollbar overflow-x-auto gap-2" id="dateRibbon"></div>
 
-        <!-- Stake & Bankroll Calculator Widget (Feature 3) -->
-        <section class="bg-gray-900 border border-gray-800 rounded-2xl p-4 space-y-3">
-            <div class="flex items-center justify-between">
-                <h3 class="font-bold text-white text-xs flex items-center gap-2">
-                    <span>🧮 Stake & Bankroll Calculator</span>
-                </h3>
-                <span class="text-[10px] text-amber-400 font-mono">Kelly / Flat Staking Model</span>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
-                <div>
-                    <label class="text-gray-400 block mb-1 font-mono text-[10px]">Bankroll Capital ($ / UGX)</label>
-                    <input type="number" id="calcBankroll" value="100" oninput="calculateStakes()" class="w-full bg-gray-800 border border-gray-700 text-white rounded-xl px-3 py-2 focus:outline-none focus:border-amber-500 font-mono">
-                </div>
-                <div>
-                    <label class="text-gray-400 block mb-1 font-mono text-[10px]">Risk Percentage (%)</label>
-                    <select id="calcRiskPct" onchange="calculateStakes()" class="w-full bg-gray-800 border border-gray-700 text-white rounded-xl px-3 py-2">
-                        <option value="2">Conservative (2%)</option>
-                        <option value="5" selected>Standard VIP (5%)</option>
-                        <option value="10">High Roller (10%)</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="text-gray-400 block mb-1 font-mono text-[10px]">Recommended Stake & Return</label>
-                    <div class="bg-gray-800 border border-gray-700 text-amber-400 rounded-xl px-3 py-2 font-mono font-bold flex items-center justify-between">
-                        <span id="outputStake">$5.00</span>
-                        <span class="text-[10px] text-emerald-400" id="outputReturn">Est. Payout: $24.50</span>
-                    </div>
-                </div>
-            </div>
-        </section>
-
         <!-- Ticket Section Header -->
         <section class="space-y-4">
             <div class="flex items-center justify-between flex-wrap gap-2">
@@ -279,14 +227,9 @@
                         <span id="strategySubtext">🛡️ AI Engine Strategy: Ultra Precision Filter Active (95%+ Target Win Rate)</span>
                     </p>
                 </div>
-                <div class="flex items-center gap-2">
-                    <button onclick="shareToWhatsApp()" class="text-xs bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded-xl font-mono font-bold flex items-center gap-1.5 shadow-lg transition">
-                        <span>💬 WhatsApp</span>
-                    </button>
-                    <span class="text-xs bg-amber-500/10 text-amber-400 border border-amber-500/30 px-3 py-1.5 rounded-xl font-mono font-bold shadow-lg shadow-amber-500/5" id="totalOddsBadge">
-                        TOTAL ODDS: 0.00
-                    </span>
-                </div>
+                <span class="text-xs bg-amber-500/10 text-amber-400 border border-amber-500/30 px-3 py-1.5 rounded-xl font-mono font-bold shadow-lg shadow-amber-500/5" id="totalOddsBadge">
+                    TOTAL ODDS: 0.00
+                </span>
             </div>
 
             <!-- Feed Matches Container -->
@@ -334,68 +277,6 @@
         function saveSettings() {
             closeSettingsModal();
             fetchMatchData(selectedDateObj, false);
-        }
-
-        /* Feature 3: VIP Passcode State */
-        let pendingCategory = '';
-        let isVipUnlocked = false;
-
-        function attemptSwitchCategory(cat) {
-            if (isVipUnlocked || cat === 'single_25' || cat === 'live_inplay' || cat === 'mega1' || cat === 'btts' || cat === 'combo' || cat === 'over15' || cat === 'over25' || cat === 'over35' || cat === 'dc1x' || cat === 'dcx2' || cat === 'home_win' || cat === 'away_win' || cat === 'draw_x') {
-                switchCategory(cat);
-            } else {
-                pendingCategory = cat;
-                toggleDrawer(false);
-                document.getElementById('vipPasscodeModal').classList.remove('hidden');
-                document.getElementById('passcodeError').classList.add('hidden');
-                document.getElementById('vipPasscodeInput').value = '';
-            }
-        }
-
-        function verifyVipPin() {
-            const pin = document.getElementById('vipPasscodeInput').value;
-            if (pin === '7777') {
-                isVipUnlocked = true;
-                closeVipModal();
-                switchCategory(pendingCategory);
-            } else {
-                document.getElementById('passcodeError').classList.remove('hidden');
-            }
-        }
-
-        function closeVipModal() {
-            document.getElementById('vipPasscodeModal').classList.add('hidden');
-        }
-
-        /* Feature 4: Theme Accent Switcher */
-        function applyThemeAccent(accent) {
-            const root = document.documentElement;
-            const brandAccent = document.getElementById('brandTitleAccent');
-            
-            // Remove previous accent styling flags if any
-            root.classList.remove('theme-emerald', 'theme-purple', 'theme-cyan', 'theme-amber');
-            root.classList.add(`theme-${accent}`);
-            
-            // We can also store preference
-            localStorage.setItem('wins1_theme_accent', accent);
-        }
-
-        /* Feature 3: Stake Calculator Logic */
-        let currentTotalOdds = 0.0;
-        function calculateStakes() {
-            const bankroll = parseFloat(document.getElementById('calcBankroll')?.value || '100');
-            const riskPct = parseFloat(document.getElementById('calcRiskPct')?.value || '5');
-            
-            const stake = (bankroll * (riskPct / 100)).toFixed(2);
-            const estReturn = (stake * (currentTotalOdds > 0 ? currentTotalOdds : 2.5)).toFixed(2);
-
-            document.getElementById('outputStake').textContent = `$${stake}`;
-            document.getElementById('outputReturn').textContent = `Est. Payout: $${estReturn}`;
-        }
-
-        function shareToWhatsApp() {
-            const text = encodeURIComponent(`🔥 WINS1 VIP ACCUMULATOR & PICKS\nTotal Odds: ${currentTotalOdds.toFixed(2)}\nCheck out today's 95%+ precision AI tips!`);
-            window.open(`https://api.whatsapp.com/send?phone=256707282428&text=${text}`, '_blank');
         }
 
         function getYYYYMMDD(d) {
@@ -501,6 +382,7 @@
             return Math.abs(hash);
         }
 
+        /* 2.5+ Odds Single Engine & Predictive Engine Strategy */
         function evaluatePick(homeName, awayName, seed, index, category, matchState, currentH, currentA, clock) {
             const hashVal = (stringHash(homeName) + stringHash(awayName) + seed + index) % 100;
             const xgHome = (1.6 + (hashVal % 15) / 10).toFixed(2);
@@ -850,8 +732,6 @@
                 }
                 const oddsBadge = document.getElementById('totalOddsBadge');
                 if (oddsBadge) oddsBadge.textContent = `TOTAL ODDS: 0.00`;
-                currentTotalOdds = 0.0;
-                calculateStakes();
                 resetAutoRefreshCountdown();
                 return;
             }
@@ -872,9 +752,7 @@
             if (!container) return;
             container.innerHTML = '';
             
-            currentTotalOdds = matches.reduce((acc, m) => acc * m.odd, 1.0);
-            calculateStakes();
-
+            let totalOdds = matches.reduce((acc, m) => acc * m.odd, 1.0);
             const format = document.getElementById('settingOddsFormat')?.value || 'decimal';
 
             matches.forEach(m => {
@@ -965,7 +843,7 @@
             });
 
             const oddsBadge = document.getElementById('totalOddsBadge');
-            if (oddsBadge) oddsBadge.textContent = `TOTAL ODDS: ${currentTotalOdds.toFixed(2)}`;
+            if (oddsBadge) oddsBadge.textContent = `TOTAL ODDS: ${totalOdds.toFixed(2)}`;
         }
 
         function initAutoRefresh() {
@@ -1018,7 +896,7 @@
                     fetchMatchData(target, false);
                 };
 
-.ribbon.appendChild(btn);
+                ribbon.appendChild(btn);
             }
 
             if (todayBtn) {
